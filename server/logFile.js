@@ -22,7 +22,6 @@ async function writeFile(filePath, data) {
 
 function getTime() {
   const date = new Date();
-
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const months = [
     "Jan",
@@ -38,59 +37,46 @@ function getTime() {
     "Nov",
     "Dec",
   ];
-
-  const dayOfWeek = daysOfWeek[date.getUTCDay()];
-  const month = months[date.getUTCMonth()];
-  const day = date.getUTCDate();
-  const year = date.getUTCFullYear();
+  const dayOfWeek = daysOfWeek[date.getDay()];
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
   const time =
-    date.getUTCHours() +
+    date.getHours() +
     ":" +
-    ("0" + date.getUTCMinutes()).slice(-2) +
+    ("0" + date.getMinutes()).slice(-2) +
     ":" +
-    ("0" + date.getUTCSeconds()).slice(-2);
+    ("0" + date.getSeconds()).slice(-2);
   const timeZone = date.toString().match(/\((.*?)\)/)[1];
-
   const formattedDate = `${dayOfWeek} ${month} ${day} ${year} ${time} GMT${
     date.getTimezoneOffset() / -60 > 0 ? "+" : "-"
   }${("0" + date.getTimezoneOffset() / -60).slice(-2)}00 (${timeZone})`;
-
   //   console.log(formattedDate);
   return formattedDate;
 }
 
-async function insertInLog(operation, parameter = null) {
+async function insertInLog(req) {
   try {
     let time = getTime();
-    const user = getCurrentUser();
-    let message;
-    // message = {
-    //   operation,
-    //   requester: user,
-    //   time,
-    // };
+    // console.log(req.query);
+    // console.log(req.body);
 
-    // if (
-    //   operation == "GET_ONE_PRODUCT" ||
-    //   operation == "POST_PRODUCT" ||
-    //   operation == "DELETE_PRODUCT" ||
-    //   operation == "UPDATE_PRODUCT" ||
-    //   operation == "GET_ORDERS_FOR_USER" ||
-    //   operation == "GET_ONE_ORDER"
-    // ) {
-    //   message.id = parameter;
-    // }
-    // if (operation == "FILTER_PRICE") {
-    //   message.price = parameter;
-    // }
-    // if (operation == "LOG_IN" || operation == "SIGN_UP") {
-    //   message.email = parameter;
-    // }
+    let filePath = path.join(__dirname, "log.txt");
 
-    const filePath = path.join(__dirname, "log.txt");
-    const fileData = await readLogFile(filePath);
-    fileData += message + "\n\n";
-    const result = await writeFile(filePath, fileData);
+    let fileData = fs.readFileSync(filePath, "utf8");
+    // let fileData = await readLogFile(filePath);
+
+    // console.log("fileData ", fileData);
+    fileData += `
+${time}
+Endpoint: ${req.originalUrl}
+Request
+    Query:${JSON.stringify(req.query)}
+    Body:${JSON.stringify(req.body)}
+    `;
+
+    fs.writeFileSync(filePath, fileData + "\n");
+    // const result = await writeFile(filePath, fileData);
     return { success: true };
   } catch (error) {
     console.error(error.message);

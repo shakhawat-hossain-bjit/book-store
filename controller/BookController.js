@@ -3,11 +3,14 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const BookModel = require("../model/Books");
 const Book = require("../model/Books");
 const { sendResponse } = require("../utils/common");
+const { insertInLog } = require("../server/logFile");
 
 class BookController {
   async getAll(req, res) {
     try {
       const books = await Book.find({});
+      insertInLog(req);
+      // writeLog(req);
       // .sort({
       //   [sortParam]: sortOrder === "asc" ? 1 : -1,
       // })

@@ -51,7 +51,7 @@ const authValidator = {
   signup: [
     body("userName")
       .exists()
-      .withMessage("user name must be provided")
+      .withMessage("userName must be provided")
       .bail()
       .isString()
       .withMessage("user name must be a string")

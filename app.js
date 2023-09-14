@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const databaseConnection = require("./db/config");
 const HTTP_STATUS = require("./constants/statusCodes");
 const { sendResponse } = require("./utils/common");
+const authRoute = require("./routes/Auth");
 dotenv.config("dotenv");
 
 app.use(cors({ origin: "*" }));
@@ -19,6 +20,8 @@ app.use((err, req, res, next) => {
   }
   next();
 });
+
+app.use("/auth", authRoute);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");

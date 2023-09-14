@@ -130,7 +130,79 @@ const authValidator = {
   ],
 };
 
+const bookValidator = {
+  add: [
+    body("title")
+      .exists()
+      .withMessage("Book title must be provided")
+      .bail()
+      .isString()
+      .withMessage("Book title must be a string")
+      .bail()
+      .isLength({ min: 10 })
+      .withMessage("Book title must be at least 10 characters long"),
+    // body("auhtor")
+    //   .exists()
+    //   .withMessage("author must be provided")
+    //   .bail()
+    //   .isString()
+    //   .withMessage("Author description must be a string")
+    //   .bail()
+    //   .isLength({ max: 50 })
+    //   .withMessage("Author must not greater than 50 characters long"),
+    body("language")
+      .exists()
+      .withMessage("language must be provided")
+      .bail()
+      .isString()
+      .withMessage("language must be a string"),
+    body("pages")
+      .exists()
+      .withMessage("Pages must be provided")
+      .bail()
+      .isNumeric()
+      .withMessage("Pages must be a number")
+      .bail()
+      .isInt({ min: 1 })
+      .withMessage("Pages must be greater than 0"),
+    body("year")
+      .exists()
+      .withMessage("Year must be provided")
+      .bail()
+      .isNumeric()
+      .withMessage("Year must be a number")
+      .bail()
+      .isInt()
+      .withMessage("Year must be integer"),
+    body("price")
+      .exists()
+      .withMessage("Price must be provided")
+      .bail()
+      .isNumeric()
+      .withMessage("Price must be a number")
+      .bail()
+      .isFloat({ min: 0 })
+      .withMessage("Price must be greater than 0"),
+    // body("rating")
+    //   .exists()
+    //   .withMessage("rating must be provided")
+    //   .bail()
+    //   .isNumeric()
+    //   .withMessage("rating must be a number")
+    //   .bail()
+    //   .isFloat({ min: 0, max:5 })
+    //   .withMessage("rating must be greater than 0 and less than 5"),
+    body("stock")
+      .exists()
+      .withMessage("Stock must be provided")
+      .bail()
+      .isInt()
+      .withMessage("Stock must be a number"),
+  ],
+};
+
 module.exports = {
   userValidator,
   authValidator,
+  bookValidator,
 };

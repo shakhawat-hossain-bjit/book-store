@@ -6,6 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "data/*",
+      "log.txt",
+      "log.json"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

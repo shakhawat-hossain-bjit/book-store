@@ -18,7 +18,7 @@ const authSchema = new mongoose.Schema(
     role: {
       type: Number,
       required: false,
-      default: 1, // 1 means general user
+      default: 2, // 2 means general user, 1 mean admin
     },
     verified: {
       type: Boolean,
@@ -34,5 +34,5 @@ const authSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Auth = mongoose.model("Auth", authSchema);
-module.exports = Auth;
+const AuthModel = mongoose.model("Auth", authSchema);
+module.exports = AuthModel;

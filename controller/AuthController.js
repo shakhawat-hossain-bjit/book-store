@@ -8,38 +8,50 @@ const { sendResponse } = require("../utils/common");
 
 class AuthController {
   async login(req, res) {
-    const { email, password } = req.body;
-    const auth = await Auth.findOne({ email: email })
-      .populate("user", "-createdAt -updatedAt")
-      .select("-createdAt -updatedAt");
-    // console.log(auth);
-    // console.log(req.body);
-    if (!auth) {
+    try {
+      const { email, password } = req.body;
+      const auth = await Auth.findOne({ email: email })
+        .populate("user", "-createdAt -updatedAt")
+        .select("-createdAt -updatedAt");
+      // console.log(auth);
+      // console.log(req.body);
+      if (!auth) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNAUTHORIZED,
+          "User is not registered"
+        );
+      }
+      const checkPassword = await bcrypt.compare(password, auth.password);
+
+      if (!checkPassword) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNAUTHORIZED,
+          "Invalid credentials"
+        );
+      }
+      const responseAuth = auth.toObject();
+      delete responseAuth.password;
+
+      const jwt = jsonwebtoken.sign(responseAuth, process.env.SECRET_KEY, {
+        expiresIn: "1h",
+      });
+
+      responseAuth.token = jwt;
       return sendResponse(
         res,
-        HTTP_STATUS.UNAUTHORIZED,
-        "User is not registered"
+        HTTP_STATUS.OK,
+        "Successfully logged in",
+        responseAuth
+      );
+    } catch (error) {
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
       );
     }
-    const checkPassword = await bcrypt.compare(password, auth.password);
-
-    if (!checkPassword) {
-      return sendResponse(res, HTTP_STATUS.UNAUTHORIZED, "Invalid credentials");
-    }
-    const responseAuth = auth.toObject();
-    delete responseAuth.password;
-
-    const jwt = jsonwebtoken.sign(responseAuth, process.env.SECRET_KEY, {
-      expiresIn: "1h",
-    });
-
-    responseAuth.token = jwt;
-    return sendResponse(
-      res,
-      HTTP_STATUS.OK,
-      "Successfully logged in",
-      responseAuth
-    );
   }
 
   async signup(req, res) {
@@ -106,7 +118,7 @@ class AuthController {
 
       return sendResponse(res, HTTP_STATUS.OK, "Successfully signed up", user);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return sendResponse(
         res,
         HTTP_STATUS.INTERNAL_SERVER_ERROR,

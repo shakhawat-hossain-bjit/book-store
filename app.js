@@ -6,6 +6,8 @@ const databaseConnection = require("./db/config");
 const HTTP_STATUS = require("./constants/statusCodes");
 const { sendResponse } = require("./utils/common");
 const authRoute = require("./routes/Auth");
+const bookRoute = require("./routes/Book");
+const { getTime } = require("./server/logFile");
 dotenv.config("dotenv");
 
 app.use(cors({ origin: "*" }));
@@ -22,6 +24,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use("/auth", authRoute);
+app.use("/books", bookRoute);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");
@@ -37,5 +40,6 @@ databaseConnection(() => {
     console.log(
       `App is running on port 8000 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `
     );
+    getTime();
   });
 });

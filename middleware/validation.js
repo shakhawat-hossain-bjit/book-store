@@ -201,6 +201,40 @@ const bookValidator = {
   ],
 };
 
+const reviewValidator = {
+  addReview: [
+    body("userId")
+      .exists()
+      .withMessage("User ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("bookId")
+      .exists()
+      .withMessage("Book ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("content")
+      .optional()
+      // .withMessage("Review content must provide")
+      // .bail()
+      .isLength({ min: 10, max: 80 })
+      .withMessage(
+        "Review content must not less than 10 characters, and more than 70 characters"
+      ),
+    body("rating")
+      .exists()
+      // .withMessage("Rating must provide")
+      // .bail()
+      .isNumeric()
+      .withMessage("Rating must be a number")
+      .bail()
+      .isFloat({ min: 0, max: 5 })
+      .withMessage("Rating must be in between 0 and 5"),
+  ],
+};
+
 const cartValidator = {
   addRemoveItemCart: [
     body("userId")
@@ -229,4 +263,5 @@ module.exports = {
   authValidator,
   bookValidator,
   cartValidator,
+  reviewValidator,
 };

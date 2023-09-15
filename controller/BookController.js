@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const HTTP_STATUS = require("../constants/statusCodes");
-const BookModel = require("../model/Books");
-const Book = require("../model/Books");
+const BookModel = require("../model/Book");
+const Book = require("../model/Book");
 const { sendResponse } = require("../utils/common");
 const { insertInLog } = require("../server/logFile");
 

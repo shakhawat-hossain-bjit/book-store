@@ -1,6 +1,6 @@
 const HTTP_STATUS = require("../constants/statusCodes");
-const { failure } = require("../util/common");
 const jsonwebtoken = require("jsonwebtoken");
+const { sendResponse } = require("../utils/common");
 
 const isAuthenticated = (req, res, next) => {
   try {
@@ -32,6 +32,8 @@ const isAuthenticated = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   try {
+    // console.log(req.body);
+    // console.log(req.params);
     const jwt = req.headers.authorization.split(" ")[1];
     const validate = jsonwebtoken.decode(jwt);
     if (validate.role === 1) {
@@ -40,7 +42,7 @@ const isAdmin = (req, res, next) => {
       return sendResponse(res, HTTP_STATUS.UNAUTHORIZED, "Unauthorized access");
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return sendResponse(
       res,
       HTTP_STATUS.INTERNAL_SERVER_ERROR,
@@ -49,4 +51,61 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-module.exports = { isAuthenticated, isAdmin };
+const checkUserIdWithParamsId = (req, res, next) => {
+  try {
+    console.log(req.params);
+    const { userId } = req.params;
+    const jwt = req.headers.authorization.split(" ")[1];
+    const validate = jsonwebtoken.decode(jwt);
+    console.log(validate?.user?._id);
+    if (validate?.user?._id == userId) {
+      next();
+    } else {
+      return sendResponse(
+        res,
+        HTTP_STATUS.UNAUTHORIZED,
+        "You have access to  your information only"
+      );
+    }
+  } catch (error) {
+    // console.log(error);
+    return sendResponse(
+      res,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      "Internal server error"
+    );
+  }
+};
+
+const checkUserIdWithBodyId = (req, res, next) => {
+  try {
+    // console.log(req.body);
+    const { userId } = req.body;
+    const jwt = req.headers.authorization.split(" ")[1];
+    const validate = jsonwebtoken.decode(jwt);
+    // console.log(validate?.user?._id);
+    if (validate?.user?._id == userId) {
+      next();
+    } else {
+      return sendResponse(
+        res,
+        HTTP_STATUS.UNAUTHORIZED,
+        "You have access to  your information only"
+      );
+    }
+  } catch (error) {
+    // console.log(error);
+    return sendResponse(
+      res,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      "Internal server error"
+    );
+  }
+};
+
+module.exports = {
+  isAuthenticated,
+  isAdmin,
+  checkUserIdWithParamsId,
+  checkUserIdWithBodyId,
+};

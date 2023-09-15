@@ -5,11 +5,12 @@ const sendResponse = (res, status, message, result = null) => {
     response.error = result;
     response.message = "Internal server error";
   }
-  if (status >= 300) {
-    response.warning = false;
-    response.error = result;
-    // response.message = "Internal server error";
-  } else {
+  // if (status >= 300) {
+  //   response.warning = false;
+  //   response.error = result;
+  //   response.message = "";
+  // }
+  else {
     response.success = true;
     response.data = result;
     response.message = "Successfully completed operations";

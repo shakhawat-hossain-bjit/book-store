@@ -201,8 +201,32 @@ const bookValidator = {
   ],
 };
 
+const cartValidator = {
+  addRemoveItemCart: [
+    body("userId")
+      .exists()
+      .withMessage("User ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("bookId")
+      .exists()
+      .withMessage("Book ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("amount")
+      .exists()
+      .withMessage("Book amont must be provided")
+      .bail()
+      .isInt({ min: 1 })
+      .withMessage("Amount must be one or above"),
+  ],
+};
+
 module.exports = {
   userValidator,
   authValidator,
   bookValidator,
+  cartValidator,
 };

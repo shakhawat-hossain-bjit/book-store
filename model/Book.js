@@ -56,10 +56,10 @@ const bookSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
-    // reviews: {
-    //   type: [mongoose.Types.ObjectId],
-    //   ref: "Review",
-    // },
+    reviews: {
+      type: [mongoose.Types.ObjectId],
+      ref: "Review",
+    },
   },
   { timestamps: true }
 );

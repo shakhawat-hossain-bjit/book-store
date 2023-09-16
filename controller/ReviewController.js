@@ -13,7 +13,7 @@ class ReviewController {
         return sendResponse(
           res,
           HTTP_STATUS.UNPROCESSABLE_ENTITY,
-          "Failed to add the product",
+          "Failed to add the review",
           validation
         );
       }
@@ -48,18 +48,260 @@ class ReviewController {
       if (newReview?._id) {
         // console.log(newReview);
         let { rating: previousRating = 0, reviewCount = 0 } = book;
-        rating = (
-          (previousRating * reviewCount + parseFloat(rating)) /
-          (reviewCount + 1)
-        ).toFixed(2);
+        rating = Number(
+          (
+            (previousRating * reviewCount + parseFloat(rating)) /
+            (reviewCount + 1)
+          ).toFixed(2)
+        );
         reviewCount++;
 
-        await BookModel.updateOne(
+        let bookUpdate = await BookModel.updateOne(
           { _id: bookId },
           { $set: { reviewCount, rating }, $push: { reviews: newReview?._id } }
         );
-        return sendResponse(res, HTTP_STATUS.OK, "Successfully added review");
+        if (bookUpdate)
+          return sendResponse(
+            res,
+            HTTP_STATUS.OK,
+            "Successfully added review",
+            newReview
+          );
       }
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async update(req, res) {
+    try {
+      // express validator
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to update review",
+          validation
+        );
+      }
+
+      let { content, rating, userId } = req.body;
+
+      let { reviewId } = req.params;
+      console.log(reviewId, content, rating);
+
+      //check if the review  exist
+      const existReview = await ReviewModel.findOne({ _id: reviewId });
+      if (!existReview) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.NOT_FOUND,
+          "This review doesn't exist"
+        );
+      }
+
+      //check if the book exist
+      const book = await BookModel.findOne({ _id: existReview?.bookId });
+      if (!book) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book is not exist");
+      }
+
+      //check if the review is accessible to the  user
+      // console.log("userId ", userId);
+      if (existReview?.userId != userId) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNAUTHORIZED,
+          "This review is not accessible by you"
+        );
+      }
+
+      let reviewUpdate;
+
+      if (!rating && !content) {
+        console.log("delete");
+        reviewUpdate = await ReviewModel.deleteOne({ _id: reviewId });
+
+        let previousRating = existReview.rating || 0;
+        let { rating: currrentRatingOfBook, reviewCount } = book;
+
+        let newRating = Number(
+          (
+            (currrentRatingOfBook * reviewCount - previousRating) /
+            (reviewCount - 1)
+          ).toFixed(2)
+        );
+        let newReviewCount = reviewCount - 1;
+        console.log(newRating, " && ", newReviewCount);
+
+        let updatedBook = await BookModel.updateOne(
+          { _id: book?._id },
+          {
+            $set: {
+              rating: newRating,
+              reviewCount: newReviewCount,
+            },
+          },
+          {
+            $pull: {
+              reviews: reviewId,
+            },
+          }
+        );
+        if (updatedBook)
+          return sendResponse(
+            res,
+            HTTP_STATUS.OK,
+            "Successfully deleted the review"
+          );
+      } else if (rating == undefined && content) {
+        console.log("content");
+        reviewUpdate = await ReviewModel.updateOne(
+          { _id: reviewId },
+          { $set: { content: content }, $unset: { rating: "" } }
+        );
+      } else if (content == undefined && rating) {
+        console.log("rating");
+        reviewUpdate = await ReviewModel.updateOne(
+          { _id: reviewId },
+          { $set: { rating: rating }, $unset: { content: "" } }
+        );
+      } else {
+        console.log("content and rating");
+        reviewUpdate = await ReviewModel.updateOne(
+          { _id: reviewId },
+          { $set: { rating: rating, content: content } }
+        );
+      }
+      // console.log(reviewUpdate);
+
+      let previousRating = existReview.rating || 0;
+      let { rating: currrentRatingOfBook, reviewCount } = book;
+
+      // rating is not provided by user,
+      if (rating == undefined) {
+        // take pervious rating of that review and update both reviewCount & rating in book
+        book.rating = Number(
+          (
+            (currrentRatingOfBook * reviewCount - previousRating) /
+            (reviewCount - 1)
+          ).toFixed(2)
+        );
+        // console.log("book.rating ", typeof book.rating);
+        book.reviewCount = reviewCount - 1;
+      } else {
+        // take pervious rating of that review and both rating in book
+        rating = parseFloat(rating);
+        console.log(currrentRatingOfBook, reviewCount, rating);
+        book.rating = Number(
+          (
+            (currrentRatingOfBook * (reviewCount - 1) + rating) /
+            reviewCount
+          ).toFixed(2)
+        );
+      }
+      let result = await book.save();
+
+      if (result)
+        return sendResponse(
+          res,
+          HTTP_STATUS.OK,
+          "Successfully updated the review"
+        );
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      // express validator
+      // const validation = validationResult(req).array();
+      // if (validation.length > 0) {
+      //   return sendResponse(
+      //     res,
+      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      //     "Failed to update review",
+      //     validation
+      //   );
+      // }
+
+      let { userId } = req.body;
+      let { reviewId } = req.params;
+
+      //check if the review  exist
+      const existReview = await ReviewModel.findOne({ _id: reviewId });
+      if (!existReview) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.NOT_FOUND,
+          "This review doesn't exist"
+        );
+      }
+
+      //check if the book exist
+      const book = await BookModel.findOne({ _id: existReview?.bookId });
+      if (!book) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book is not exist");
+      }
+
+      //check if the review is accessible to the  user
+      // console.log("userId ", userId);
+      if (existReview?.userId != userId) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNAUTHORIZED,
+          "This review is not accessible by you"
+        );
+      }
+
+      let reviewUpdate;
+
+      console.log("delete ", reviewId);
+      reviewUpdate = await ReviewModel.deleteOne({ _id: reviewId });
+
+      let previousRating = existReview.rating || 0;
+      let { rating: currrentRatingOfBook, reviewCount } = book;
+
+      let newRating = Number(
+        (
+          (currrentRatingOfBook * reviewCount - previousRating) /
+          (reviewCount - 1)
+        ).toFixed(2)
+      );
+      let newReviewCount = reviewCount - 1;
+      // console.log(newRating, " && ", newReviewCount);
+
+      let updatedBook = await BookModel.updateOne(
+        { _id: book?._id },
+        {
+          $set: {
+            rating: newRating,
+            reviewCount: newReviewCount,
+          },
+          $pull: {
+            reviews: reviewId,
+          },
+        }
+      );
+
+      if (updatedBook)
+        return sendResponse(
+          res,
+          HTTP_STATUS.OK,
+          "Successfully deleted the review"
+        );
     } catch (error) {
       console.log(error);
       return sendResponse(

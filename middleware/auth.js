@@ -9,8 +9,33 @@ const isAuthenticated = (req, res, next) => {
     }
     const jwt = req.headers.authorization.split(" ")[1];
     const validate = jsonwebtoken.verify(jwt, process.env.SECRET_KEY);
+    // jwt verified
     if (validate) {
-      next();
+      const { userId: userIdParams } = req.params;
+      const { userId: userIdBody } = req.body;
+      const validate = jsonwebtoken.decode(jwt);
+      // console.log(
+      //   "userIdParams ",
+      //   userIdParams,
+      //   " &&& userIdBody ",
+      //   userIdBody
+      // );
+      if (
+        validate?.user?._id &&
+        (validate?.user?._id == userIdParams ||
+          validate?.user?._id == userIdBody ||
+          (userIdParams == undefined && userIdBody == undefined))
+      ) {
+        // console.log("inside ", validate?.user?._id);
+        req.body.userId = validate?.user?._id;
+        next();
+      } else {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNAUTHORIZED,
+          "You have access to  your information only"
+        );
+      }
     } else {
       throw new Error();
     }

@@ -233,6 +233,21 @@ const reviewValidator = {
       .isFloat({ min: 0, max: 5 })
       .withMessage("Rating must be in between 0 and 5"),
   ],
+  updateReview: [
+    param("reviewId")
+      .exists()
+      .withMessage("Review ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("rating")
+      .optional()
+      .isNumeric()
+      .withMessage("Rating must be a number")
+      .bail()
+      .isFloat({ min: 0, max: 5 })
+      .withMessage("Rating must be in between 0 and 5"),
+  ],
 };
 
 const cartValidator = {

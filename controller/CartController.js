@@ -81,7 +81,6 @@ class CartController {
 
       if (!cart) {
         // console.log("cart ", cart);
-        fdaf;
         let total = Number((book.price * amount).toFixed(2));
         const newCart = await CartModel.create({
           user: userId,
@@ -116,7 +115,8 @@ class CartController {
       } else {
         cart.books.push({ book: bookId, quantity: amount });
       }
-      cart.total = cart.total + Number((book.price * amount).toFixed(2));
+      cart.total = Number((cart.total + book.price * amount).toFixed(2));
+      console.log(cart.total, Number((book.price * amount).toFixed(2)));
 
       await cart.save();
       return sendResponse(
@@ -199,7 +199,7 @@ class CartController {
       //  trying to order  book equal to stock
       if (cart.books[bookExistIntex].quantity === amount) {
         cart.books.splice(bookExistIntex, 1);
-        cart.total = cart.total - Number((book.price * amount).toFixed(2));
+        cart.total = Number((cart.total - book.price * amount).toFixed(2));
         await cart.save();
         return sendResponse(
           res,
@@ -211,7 +211,7 @@ class CartController {
       //  trying to order  book less than stock
       if (cart.books[bookExistIntex].quantity > amount) {
         cart.books[bookExistIntex].quantity -= amount;
-        cart.total = cart.total - Number((book.price * amount).toFixed(2));
+        cart.total = Number((cart.total - book.price * amount).toFixed(2));
         await cart.save();
         return sendResponse(res, HTTP_STATUS.OK, "Book reduced in cart", cart);
       }

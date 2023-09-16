@@ -11,15 +11,15 @@ const CartController = require("../controller/CartController");
 
 routes.get(
   "/:userId",
-  isAuthenticated,
-  checkUserIdWithParamsId,
+  // isAuthenticated,
+  // checkUserIdWithParamsId,
   CartController.getCart
 );
 
 routes.post(
   "/add-book",
-  isAuthenticated,
-  checkUserIdWithBodyId,
+  // isAuthenticated,
+  // checkUserIdWithBodyId,
   cartValidator.addRemoveItemCart,
   CartController.addBookToCart
 );

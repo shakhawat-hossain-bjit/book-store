@@ -53,7 +53,7 @@ const isAdmin = (req, res, next) => {
 
 const checkUserIdWithParamsId = (req, res, next) => {
   try {
-    console.log(req.params);
+    // console.log(req.params);
     const { userId } = req.params;
     const jwt = req.headers.authorization.split(" ")[1];
     const validate = jsonwebtoken.decode(jwt);

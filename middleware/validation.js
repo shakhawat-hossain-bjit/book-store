@@ -254,7 +254,7 @@ const cartValidator = {
       .withMessage("Book amont must be provided")
       .bail()
       .isInt({ min: 1 })
-      .withMessage("Amount must be one or above"),
+      .withMessage("Amount must be integer, value should be 1 or above"),
   ],
 };
 

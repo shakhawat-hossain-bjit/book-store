@@ -281,7 +281,7 @@ class ReviewController {
 
       let reviewUpdate;
 
-      console.log("delete ", reviewId);
+      // console.log("delete ", reviewId);
       reviewUpdate = await ReviewModel.deleteOne({ _id: reviewId });
 
       let previousRating = existReview.rating || 0;

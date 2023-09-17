@@ -93,7 +93,7 @@ class CartController {
           return sendResponse(
             res,
             HTTP_STATUS.OK,
-            "Added item to existing cart",
+            "Added item to a new cart",
             newCart
           );
         }

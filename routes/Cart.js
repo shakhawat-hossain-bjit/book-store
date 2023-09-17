@@ -9,24 +9,18 @@ const {
 } = require("../middleware/auth");
 const CartController = require("../controller/CartController");
 
-routes.get(
-  "/:userId",
-  // isAuthenticated,
-  // checkUserIdWithParamsId,
-  CartController.getCart
-);
+routes.get("/:userId", isAuthenticated, CartController.getCart);
 
 routes.post(
   "/add-book",
-  // isAuthenticated,
-  // checkUserIdWithBodyId,
+  isAuthenticated,
   cartValidator.addRemoveItemCart,
   CartController.addBookToCart
 );
 
 routes.patch(
   "/remove-book",
-  // isAuthenticated,
+  isAuthenticated,
   cartValidator.addRemoveItemCart,
   CartController.removeBookFromCart
 );

@@ -6,6 +6,7 @@ const databaseConnection = require("./db/config");
 const HTTP_STATUS = require("./constants/statusCodes");
 const { sendResponse } = require("./utils/common");
 const authRoute = require("./routes/Auth");
+
 const bookRoute = require("./routes/Book");
 const cartRoute = require("./routes/Cart");
 const transactionRoute = require("./routes/Transaction");
@@ -31,6 +32,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use("/auth", authRoute);
+
 app.use("/books", bookRoute);
 app.use("/cart", cartRoute);
 app.use("/transaction", transactionRoute);

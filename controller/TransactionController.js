@@ -19,8 +19,8 @@ class TransactionController {
 
       if (detail === "1") {
         transactions = await TransactionModel.find({})
-          .populate("user", "name email")
-          .populate("books.book", "title description price rating brand")
+          .populate("user", "userName email")
+          .populate("books.book", "title author price rating language category")
           .select("-__v");
       } else {
         transactions = await TransactionModel.find({});
@@ -37,6 +37,29 @@ class TransactionController {
         );
       }
       return sendResponse(res, HTTP_STATUS.OK, "No transactions were found");
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async findOne(req, res) {
+    try {
+      let transaction = await TransactionModel.find({})
+        .populate("user", "name email")
+        .populate("books.book", "title author price rating language category")
+        .select("-__v");
+
+      return sendResponse(
+        res,
+        HTTP_STATUS.OK,
+        "Transaction details is returned",
+        transaction
+      );
     } catch (error) {
       console.log(error);
       return sendResponse(

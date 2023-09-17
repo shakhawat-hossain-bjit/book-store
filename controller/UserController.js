@@ -81,6 +81,31 @@ class UserController {
       );
     }
   }
+
+  async update(req, res) {
+    try {
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to add the user",
+          validation
+        );
+      }
+
+      const { customerId } = req.params;
+
+      const user = await UserModel.findOne({ _id: customerId });
+    } catch (error) {
+      //   console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
 }
 
 module.exports = new UserController();

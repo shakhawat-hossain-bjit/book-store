@@ -35,7 +35,7 @@ class AuthController {
       delete responseAuth.password;
 
       const jwt = jsonwebtoken.sign(responseAuth, process.env.SECRET_KEY, {
-        expiresIn: "10h",
+        expiresIn: "2 days",
       });
 
       responseAuth.token = jwt;

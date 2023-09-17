@@ -78,7 +78,7 @@ class BookController {
         return sendResponse(
           res,
           HTTP_STATUS.UNPROCESSABLE_ENTITY,
-          "Product with same title already exists"
+          "Book with same title already exists"
         );
       }
 
@@ -97,15 +97,115 @@ class BookController {
         category,
         stock,
       });
-      console.log(newBook);
+      // console.log(newBook);
 
       if (newBook) {
         return sendResponse(
           res,
-          HTTP_STATUS.OK,
+          HTTP_STATUS.CREATED,
           "Successfully added book",
           newBook
         );
+      }
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async update(req, res) {
+    try {
+      // const validation = validationResult(req).array();
+      // if (validation.length > 0) {
+      //   return sendResponse(
+      //     res,
+      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      //     "Failed to add the product",
+      //     validation
+      //   );
+      // }
+
+      const { bookId } = req.params;
+      const {
+        author,
+        title,
+        country,
+        imageLink,
+        language,
+        link,
+        pages,
+        year,
+        price,
+        rating,
+        reviewCount,
+        category,
+        stock,
+      } = req.body;
+
+      const existBook = await BookModel.findOne({ _id: bookId });
+
+      if (!existBook) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book not exist");
+      }
+
+      let bookUpdateResult = await BookModel.updateOne(
+        { _id: bookId },
+        {
+          $set: {
+            author,
+            title,
+            country,
+            imageLink,
+            language,
+            link,
+            pages,
+            year,
+            price,
+            rating,
+            reviewCount,
+            category,
+            stock,
+          },
+        }
+      );
+      console.log(bookUpdateResult);
+      if (bookUpdateResult?.modifiedCount) {
+        return sendResponse(res, HTTP_STATUS.OK, "Book updated successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+  async delete(req, res) {
+    try {
+      // const validation = validationResult(req).array();
+      // if (validation.length > 0) {
+      //   return sendResponse(
+      //     res,
+      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      //     "Failed to add the product",
+      //     validation
+      //   );
+      // }
+
+      const { bookId } = req.params;
+
+      let bookDeleted = await BookModel.deleteOne({ _id: bookId });
+      console.log(bookDeleted);
+
+      if (bookDeleted?.deletedCount) {
+        return sendResponse(res, HTTP_STATUS.OK, "Book deleted successfully");
+      } else {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book not found");
       }
     } catch (error) {
       console.log(error);

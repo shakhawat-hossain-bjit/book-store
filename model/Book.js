@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema(
   {
-    auhtor: {
+    author: {
       type: String,
       required: true,
       default: "Unknown",

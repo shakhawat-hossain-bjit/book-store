@@ -106,12 +106,6 @@ class ReviewController {
         );
       }
 
-      //check if the book exist
-      const book = await BookModel.findOne({ _id: existReview?.bookId });
-      if (!book) {
-        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book is not exist");
-      }
-
       //check if the review is accessible to the  user
       // console.log("userId ", userId);
       if (existReview?.userId != userId) {
@@ -120,6 +114,12 @@ class ReviewController {
           HTTP_STATUS.UNAUTHORIZED,
           "This review is not accessible by you"
         );
+      }
+
+      //check if the book exist
+      const book = await BookModel.findOne({ _id: existReview?.bookId });
+      if (!book) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book is not exist");
       }
 
       let reviewUpdate;
@@ -147,8 +147,6 @@ class ReviewController {
               rating: newRating,
               reviewCount: newReviewCount,
             },
-          },
-          {
             $pull: {
               reviews: reviewId,
             },
@@ -181,11 +179,10 @@ class ReviewController {
       }
       // console.log(reviewUpdate);
 
-      let previousRating = existReview.rating || 0;
       let { rating: currrentRatingOfBook, reviewCount } = book;
-
       // rating is not provided by user,
       if (rating == undefined) {
+        let previousRating = existReview.rating || 0;
         // take pervious rating of that review and update both reviewCount & rating in book
         book.rating = Number(
           (
@@ -195,18 +192,34 @@ class ReviewController {
         );
         // console.log("book.rating ", typeof book.rating);
         book.reviewCount = reviewCount - 1;
-      } else {
+      }
+      // rating is provided by user,
+      else {
         // take pervious rating of that review and both rating in book
         rating = parseFloat(rating);
         console.log(currrentRatingOfBook, reviewCount, rating);
-        book.rating = Number(
-          (
-            (currrentRatingOfBook * (reviewCount - 1) + rating) /
-            reviewCount
-          ).toFixed(2)
-        );
+        let previousRating = existReview.rating;
+        // if review has no rating previously, then review count should be increased
+        if (previousRating == undefined) {
+          book.rating = Number(
+            (
+              (currrentRatingOfBook * reviewCount + rating) /
+              (reviewCount + 1)
+            ).toFixed(2)
+          );
+          book.reviewCount = reviewCount + 1;
+        }
+        // if review has rating previously, then review count should not be increased
+        else {
+          book.rating = Number(
+            (
+              (currrentRatingOfBook * reviewCount + (rating - previousRating)) /
+              reviewCount
+            ).toFixed(2)
+          );
+        }
       }
-      let result = await book.save();
+      let result = await book.save({ validateBeforeSave: false });
 
       if (result)
         return sendResponse(

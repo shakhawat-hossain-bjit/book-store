@@ -20,8 +20,12 @@ app.use(express.urlencoded({ extended: true })); // Parses data as urlencoded
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    console.log(err);
-    return res.status(400).send(failure("Invalid JSON provided"));
+    // console.log(err);
+    return sendResponse(
+      res,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      "Invalid JSON provided"
+    );
   }
   next();
 });

@@ -1,37 +1,113 @@
 const { validationResult } = require("express-validator");
 const HTTP_STATUS = require("../constants/statusCodes");
 const BookModel = require("../model/Book");
-const Book = require("../model/Book");
 const { sendResponse } = require("../utils/common");
 const { insertInLog } = require("../server/logFile");
 
 class BookController {
   async getAll(req, res) {
     try {
-      const books = await Book.find({});
-      insertInLog(req);
-      // writeLog(req);
-      // .sort({
-      //   [sortParam]: sortOrder === "asc" ? 1 : -1,
-      // })
-      // .skip((page - 1) * limit)
-      // .limit(limit ? limit : 100);
-      if (books.length === 0) {
+      const {
+        sortParam,
+        sortOrder,
+        search,
+        languageSearch,
+        category,
+        price,
+        priceFil,
+        stock,
+        stockFil,
+        rating,
+        ratingFil,
+        page,
+        limit,
+      } = req.query;
+      if (page < 1 || limit < 0) {
         return sendResponse(
           res,
-          HTTP_STATUS.NOT_FOUND,
-          "No products were found"
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Page and limit values must be at least 1"
         );
       }
+      if (
+        (sortOrder && !sortParam) ||
+        (!sortOrder && sortParam) ||
+        (sortParam &&
+          sortParam !== "pages" &&
+          sortParam !== "year" &&
+          sortParam !== "title" &&
+          sortParam !== "rating" &&
+          sortParam !== "reviewCount" &&
+          sortParam !== "stock" &&
+          sortParam !== "price") ||
+        (sortOrder && sortOrder !== "asc" && sortOrder !== "desc")
+      ) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Invalid sort parameters provided"
+        );
+      }
+      const filter = {};
+
+      if (price && priceFil) {
+        if (priceFil === "low") {
+          filter.price = { $lte: parseFloat(price) };
+        } else {
+          filter.price = { $gte: parseFloat(price) };
+        }
+      }
+      if (stock && stockFil) {
+        if (stockFil === "low") {
+          filter.stock = { $lte: parseFloat(stock) };
+        } else {
+          filter.stock = { $gte: parseFloat(stock) };
+        }
+      }
+      if (rating && ratingFil) {
+        if (ratingFil === "low") {
+          filter.rating = { $lte: parseFloat(rating) };
+        } else {
+          filter.rating = { $gte: parseFloat(rating) };
+        }
+      }
+
+      if (category) {
+        filter.category = { $in: category.toLowerCase() };
+      }
+      if (search) {
+        filter["$or"] = [
+          { author: { $regex: search, $options: "i" } },
+          { title: { $regex: search, $options: "i" } },
+        ];
+      }
+
+      const bookCount = await BookModel.find().count();
+      const filteredBookCount = await BookModel.find(filter).count();
+      const books = await BookModel.find(filter)
+        .sort({
+          [sortParam]: sortOrder === "asc" ? 1 : -1,
+        })
+        .skip((page - 1) * limit)
+        .limit(limit ? limit : 100)
+        .select("-createdAt -updatedAt -__v");
+
+      // insertInLog(req);
+
+      if (books.length === 0) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "No Books were found");
+      }
+
       return sendResponse(
         res,
         HTTP_STATUS.OK,
         "Successfully got all products",
         {
-          //   total: productCount,
-          //   count: products.length,
-          //   page: parseInt(page),
-          //   limit: parseInt(limit),
+          totalBook: bookCount,
+          filteredBookCount: filteredBookCount,
+          count: books.length,
+          page: parseInt(page),
+          limit: parseInt(limit),
           books: books,
         }
       );

@@ -23,7 +23,7 @@ class DiscountController {
       console.log(
         ` ${x.getDate()}/${
           x.getMonth() + 1
-        }/${x.getFullYear()}  ${x.getHourse()}:${x.getMinutes()}:${x.getSeconds()}`
+        }/${x.getFullYear()}  ${x.getHours()}:${x.getMinutes()}:${x.getSeconds()}`
       );
 
       const booksToDiscount = await BookModel.find({

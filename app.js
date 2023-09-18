@@ -12,6 +12,7 @@ const cartRoute = require("./routes/Cart");
 const transactionRoute = require("./routes/Transaction");
 const reviewRoute = require("./routes/Review");
 const walletRoute = require("./routes/Wallet");
+const discountRoute = require("./routes/Discount");
 const { getTime } = require("./server/logFile");
 dotenv.config("dotenv");
 
@@ -39,6 +40,7 @@ app.use("/cart", cartRoute);
 app.use("/transaction", transactionRoute);
 app.use("/reviews", reviewRoute);
 app.use("/wallet", walletRoute);
+app.use("/discount", discountRoute);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");

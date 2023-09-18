@@ -2,12 +2,10 @@ const mongoose = require("mongoose");
 
 const discountSchema = new mongoose.Schema(
   {
-    books: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
+    title: {
+      type: String,
+      required: [true, "Discount must have a title"],
+    },
     startTime: {
       type: Date,
       required: [true, "Discount must have a start time"],
@@ -16,10 +14,18 @@ const discountSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Discount must have a end time"],
     },
-    price: {
+    discountPercentage: {
       type: Number,
+      min: 0,
+      max: 100,
       required: [true, "Every discount should have a value"],
     },
+    books: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Book",
+      },
+    ],
   },
   { timestamps: true }
 );

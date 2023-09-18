@@ -60,6 +60,12 @@ const bookSchema = new mongoose.Schema(
       type: [mongoose.Types.ObjectId],
       ref: "Review",
     },
+    discounts: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Discount",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -5,6 +5,7 @@ const { bookValidator } = require("../middleware/validation");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 routes.get("/all", BookController.getAll);
+
 routes.post(
   "/create",
   isAuthenticated,
@@ -12,13 +13,14 @@ routes.post(
   bookValidator.add,
   BookController.create
 );
+
 routes.patch(
   "/update/:bookId",
   isAuthenticated,
   isAdmin,
-
   BookController.update
 );
+
 routes.delete(
   "/delete/:bookId",
   isAuthenticated,

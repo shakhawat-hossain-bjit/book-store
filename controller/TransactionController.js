@@ -3,6 +3,8 @@ const CartModel = require("../model/Cart");
 const BookModel = require("../model/Book");
 const HTTP_STATUS = require("../constants/statusCodes");
 const { sendResponse } = require("../utils/common");
+const UserModel = require("../model/User");
+const WalletModel = require("../model/wallet");
 
 class TransactionController {
   async getAll(req, res) {
@@ -73,6 +75,13 @@ class TransactionController {
   async create(req, res) {
     try {
       const { userId, cartId } = req.body;
+
+      const user = await UserModel.findOne({ _id: userId }).populate("wallet");
+
+      if (!user) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "User not found");
+      }
+
       const cart = await CartModel.findOne({ _id: cartId, user: userId });
 
       if (!cart) {
@@ -82,6 +91,15 @@ class TransactionController {
           "Cart was not found for this user"
         );
       }
+
+      if (!cart?.books?.length) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Cart has no book added"
+        );
+      }
+
       //   console.log(cart);
       const bookList = cart?.books?.map((element) => {
         return element.book;
@@ -114,6 +132,27 @@ class TransactionController {
         }
         book.stock -= cart.books[bookFound].quantity;
       });
+
+      // update walllet,,,
+      if (user?.wallet?.balance && user?.wallet?.balance >= cart?.total) {
+        let { balance = 0 } = user?.wallet;
+        balance = Number((balance - cart?.total).toFixed(2));
+        const obj = {
+          transactionType: "debit",
+          amount: cart?.total,
+          time: new Date(),
+        };
+        const walletUpdate = await WalletModel.updateOne(
+          { _id: user?.wallet?._id },
+          { $set: { balance: balance }, $push: { statements: obj } }
+        );
+      } else {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Insuffiecient balance"
+        );
+      }
 
       const bulk = [];
       booksInCart.map((element) => {

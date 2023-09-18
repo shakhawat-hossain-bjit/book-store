@@ -19,6 +19,13 @@ class DiscountController {
 
       let { title, startTime, endTime, discountPercentage, books } = req.body;
 
+      let x = new Date(startTime);
+      console.log(
+        ` ${x.getDate()}/${
+          x.getMonth() + 1
+        }/${x.getFullYear()}  ${x.getHourse()}:${x.getMinutes()}:${x.getSeconds()}`
+      );
+
       const booksToDiscount = await BookModel.find({
         _id: {
           $in: books,
@@ -55,7 +62,7 @@ class DiscountController {
         bulk.push({
           updateOne: {
             filter: { _id: element?._id },
-            update: { $push: { discount: discountResult?._id } },
+            update: { $push: { discounts: discountResult?._id } },
           },
         });
       });

@@ -60,8 +60,31 @@ class CartController {
         return sendResponse(res, HTTP_STATUS.NOT_FOUND, "User does not exist");
       }
 
-      const cart = await CartModel.findOne({ user: userId });
-      const book = await BookModel.findById({ _id: bookId });
+      let cart = await CartModel.findOne({ user: userId });
+      const book = await BookModel.findById({ _id: bookId })
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+        .select("-createdAt -updatedAt -__v");
+
+      let currentTime = new Date();
+      let discountSum = book?.discounts?.reduce((total, discount) => {
+        if (
+          discount?.startTime <= currentTime &&
+          currentTime <= discount?.endTime
+        ) {
+          console.log("here");
+          return total + discount?.discountPercentage;
+        }
+        return total;
+      }, 0);
+
+      // console.log(book.price);
+      // console.log("discountSum ", discountSum);
+      if (discountSum <= 100) {
+        book.price = Number(
+          (book.price - book.price * (discountSum / 100)).toFixed(2)
+        );
+      }
+
       //check if book exist
       if (!book) {
         return sendResponse(
@@ -81,14 +104,14 @@ class CartController {
 
       if (!cart) {
         // console.log("cart ", cart);
-        let total = Number((book.price * amount).toFixed(2));
-        const newCart = await CartModel.create({
+        let newCart = await CartModel.create({
           user: userId,
           books: [{ book: bookId, quantity: amount }],
-          total: total,
         });
         // console.log("newCart ", newCart);
-
+        newCart = newCart.toObject();
+        // console.log("book.price ", book.price);
+        newCart.total = book.price;
         if (newCart) {
           return sendResponse(
             res,
@@ -115,10 +138,67 @@ class CartController {
       } else {
         cart.books.push({ book: bookId, quantity: amount });
       }
-      cart.total = Number((cart.total + book.price * amount).toFixed(2));
-      console.log(cart.total, Number((book.price * amount).toFixed(2)));
 
       await cart.save();
+      // console.log("cart ", cart);
+      let quantity = {};
+      const bookList = cart?.books?.map((x) => {
+        // console.log("x ", x);
+        let subObj = { quantity: x.quantity };
+        quantity[`${x?.book._id}`] = subObj;
+        return x.book;
+      });
+      console.log("quantity ", quantity);
+
+      //find all the books that are in the cart
+      const booksInCart = await BookModel.find({
+        _id: {
+          $in: bookList,
+        },
+      })
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+        .select("price _id title");
+
+      // console.log(booksInCart);
+      let price = {};
+      //books map
+      booksInCart.map((book) => {
+        //discounts map
+        let discountSum = book?.discounts?.reduce((total, discount) => {
+          if (
+            discount?.startTime <= currentTime &&
+            currentTime <= discount?.endTime
+          ) {
+            return total + discount?.discountPercentage;
+          }
+          return total;
+        }, 0);
+        // discouunt 100 er besi hole sei product dekhano jabe na
+        if (discountSum <= 100) {
+          book.price = Number(
+            (book.price - book.price * (discountSum / 100)).toFixed(2)
+          );
+          let subObj = { price: book.price };
+          price[`${book._id}`] = subObj;
+          // return obj;
+        }
+      });
+      console.log("price ", price);
+      cart = cart.toObject();
+      console.log(cart);
+      let totalPrice = 0;
+      let priceAddedBooks = cart?.books?.map((x) => {
+        let id = x.book;
+        console.log("my ", price[`${id}`].price);
+        x.price = price[`${id}`].price;
+        totalPrice += x?.price * x?.quantity;
+        return x;
+      });
+
+      console.log(priceAddedBooks);
+      cart.books = priceAddedBooks;
+      cart.totalPrice = Number(totalPrice.toFixed(2));
+
       return sendResponse(
         res,
         HTTP_STATUS.CREATED,

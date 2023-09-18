@@ -19,7 +19,7 @@ class BookController {
         stockFil,
         rating,
         ratingFil,
-        page,
+        page = 1,
         limit,
       } = req.query;
       if (page < 1 || limit < 0) {
@@ -29,6 +29,7 @@ class BookController {
           "Page and limit values must be at least 1"
         );
       }
+      let sortObj = {};
       if (
         (sortOrder && !sortParam) ||
         (!sortOrder && sortParam) ||
@@ -47,6 +48,8 @@ class BookController {
           HTTP_STATUS.UNPROCESSABLE_ENTITY,
           "Invalid sort parameters provided"
         );
+      } else {
+        sortObj = { [sortParam]: sortOrder === "asc" ? 1 : -1 };
       }
       const filter = {};
 
@@ -82,17 +85,46 @@ class BookController {
         ];
       }
 
+      // console.log("filter ", filter);
+      // console.log("sortParam ", sortParam);
+      // console.log("sortOrder ", sortOrder);
       const bookCount = await BookModel.find().count();
       const filteredBookCount = await BookModel.find(filter).count();
       const books = await BookModel.find(filter)
-        .sort({
-          [sortParam]: sortOrder === "asc" ? 1 : -1,
-        })
+        // .sort({
+        //   [sortParam]: sortOrder === "asc" ? 1 : -1,
+        // })
         .skip((page - 1) * limit)
         .limit(limit ? limit : 100)
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
         .select("-createdAt -updatedAt -__v");
 
       // insertInLog(req);
+
+      const currentTime = new Date();
+
+      //books map
+      let discountedBooks = books.map((book) => {
+        //discounts map
+        let discountSum = book?.discounts?.reduce((total, discount) => {
+          if (
+            discount?.startTime <= currentTime &&
+            currentTime <= discount?.endTime
+          ) {
+            // console.log("here");
+            return total + discount?.discountPercentage;
+          }
+          return total;
+        }, 0);
+        // discouunt 100 er besi hole sei product dekhano jabe na
+        // console.log(discountSum);
+        if (discountSum <= 100) {
+          book.price = Number(
+            (book.price - book.price * (discountSum / 100)).toFixed(2)
+          );
+          return book;
+        }
+      });
 
       if (books.length === 0) {
         return sendResponse(res, HTTP_STATUS.NOT_FOUND, "No Books were found");
@@ -105,10 +137,10 @@ class BookController {
         {
           totalBook: bookCount,
           filteredBookCount: filteredBookCount,
-          count: books.length,
+          count: discountedBooks.length,
           page: parseInt(page),
           limit: parseInt(limit),
-          books: books,
+          books: discountedBooks,
         }
       );
     } catch (error) {

@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    wallet: {
+      type: mongoose.Types.ObjectId,
+      ref: "Wallet",
+    },
     address: {
       house: String,
       road: String,

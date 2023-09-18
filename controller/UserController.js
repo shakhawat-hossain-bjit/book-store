@@ -94,9 +94,33 @@ class UserController {
         );
       }
 
+      const { userName, phone, address } = req.body;
       const { customerId } = req.params;
 
-      const user = await UserModel.findOne({ _id: customerId });
+      const userFind = await UserModel.findOne({ _id: customerId });
+      if (!userFind) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "User Not Found");
+      }
+
+      const userUpdate = await UserModel.updateOne(
+        { _id: customerId },
+        { $set: { userName, phone, address } }
+      );
+
+      // console.log(userUpdate);
+
+      if (userUpdate?.modifiedCount) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.OK,
+          "Successfully updated user data"
+        );
+      }
+      return sendResponse(
+        res,
+        HTTP_STATUS.UNPROCESSABLE_ENTITY,
+        "Something went wrong"
+      );
     } catch (error) {
       //   console.log(error);
       return sendResponse(

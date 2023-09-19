@@ -108,7 +108,7 @@ class DiscountController {
         );
       }
       const { discountId } = req.params;
-      const { title, startTime, endTime, discountPercentage } = req.body;
+      const { title, startTime, endTime, discountPercentage, books } = req.body;
 
       const existDiscount = await DiscountModel.findOne({ _id: discountId });
 
@@ -120,11 +120,23 @@ class DiscountController {
         { _id: discountId },
         {
           $set: { title, startTime, endTime, discountPercentage },
-          // $addToSet: { books: books },
+          $addToSet: { books: books },
         }
       );
 
-      if (discountUpdate) {
+      const bulk = [];
+      books.map((x) => {
+        bulk.push({
+          updateOne: {
+            filter: { _id: x },
+            update: { $addToSet: { discounts: discountId } },
+          },
+        });
+      });
+
+      const bookDiscountSave = await BookModel.bulkWrite(bulk);
+
+      if (discountUpdate && bookDiscountSave) {
         return sendResponse(
           res,
           HTTP_STATUS.OK,

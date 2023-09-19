@@ -1094,3 +1094,48 @@ Wed Sep 20 2023 0:38:55 GMT+0600 (Bangladesh Standard Time)
 Error
     Message: Sorry Something went wrong
     null
+
+Wed Sep 20 2023 0:54:07 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65082ceed61f69f68d14102b
+Request
+    Query:{}
+    Params:{"discountId":"65082ceed61f69f68d14102b"}
+    Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 0:54:07 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Wed Sep 20 2023 0:54:57 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65082ceed61f69f68d14102b
+Request
+    Query:{}
+    Params:{"discountId":"65082ceed61f69f68d14102b"}
+    Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 0:57:13 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65082ceed61f69f68d14102b
+Request
+    Query:{}
+    Params:{"discountId":"65082ceed61f69f68d14102b"}
+    Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 0:57:42 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65082ceed61f69f68d14102b
+Request
+    Query:{}
+    Params:{"discountId":"65082ceed61f69f68d14102b"}
+    Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 0:57:42 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65082ceed61f69f68d14102b
+Request
+    Query:{}
+    Params:{"discountId":"65082ceed61f69f68d14102b"}
+    Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    

@@ -9,6 +9,7 @@ const WalletModel = require("../model/wallet");
 class TransactionController {
   async getAll(req, res) {
     try {
+      const { page = 1, limit } = req.query;
       const { detail } = req.query;
       let transactions;
       if (detail && detail != "1") {
@@ -22,23 +23,38 @@ class TransactionController {
       if (detail === "1") {
         transactions = await TransactionModel.find({})
           .populate("user", "userName email")
-          .populate("books.book", "title author price rating language category")
-          .select("-__v");
+          .select("total paymentMethod user books")
+          .populate("books.book", "title author rating language category")
+          .select("-__v -craetedAt -updatedAt")
+          .skip((page - 1) * limit)
+          .limit(limit ? limit : 100);
       } else {
-        transactions = await TransactionModel.find({});
+        transactions = await TransactionModel.find({})
+          .populate("user", "userName email")
+          .skip((page - 1) * limit)
+          .limit(limit ? limit : 100);
       }
+      const transactionCount = await TransactionModel.find().count();
+
       if (transactions.length > 0) {
         return sendResponse(
           res,
           HTTP_STATUS.OK,
           "Successfully received all transactions",
           {
-            result: transactions,
-            total: transactions.length,
+            totalTransactiom: transactionCount,
+            count: transactions.length,
+            page: parseInt(page),
+            limit: parseInt(limit),
+            transactions: transactions,
           }
         );
       }
-      return sendResponse(res, HTTP_STATUS.OK, "No transactions were found");
+      return sendResponse(
+        res,
+        HTTP_STATUS.NOT_FOUND,
+        "No transactions were found"
+      );
     } catch (error) {
       console.log(error);
       return sendResponse(
@@ -82,7 +98,9 @@ class TransactionController {
         return sendResponse(res, HTTP_STATUS.NOT_FOUND, "User not found");
       }
 
-      const cart = await CartModel.findOne({ _id: cartId, user: userId });
+      let cart = await CartModel.findOne({ _id: cartId, user: userId }).select(
+        "-createdAt -updatedAt -__v"
+      );
 
       if (!cart) {
         return sendResponse(
@@ -109,7 +127,9 @@ class TransactionController {
         _id: {
           $in: bookList,
         },
-      });
+      })
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+        .select("price _id title");
 
       if (bookList?.length !== booksInCart?.length) {
         return sendResponse(
@@ -133,13 +153,53 @@ class TransactionController {
         book.stock -= cart.books[bookFound].quantity;
       });
 
+      let currentTime = new Date();
+      let priceObj = {};
+
+      booksInCart.map((book) => {
+        //discounts map
+        let discountSum = book?.discounts?.reduce((total, discount) => {
+          if (
+            discount?.startTime <= currentTime &&
+            currentTime <= discount?.endTime
+          ) {
+            return total + discount?.discountPercentage;
+          }
+          return total;
+        }, 0);
+        // console.log(discountSum);
+        // discouunt 100 er besi hole sei product dekhano jabe na
+        if (discountSum <= 100) {
+          book.price = Number(
+            (book.price - book.price * (discountSum / 100)).toFixed(2)
+          );
+          let subObj = { price: book.price };
+          priceObj[`${book._id}`] = subObj;
+        }
+      });
+
+      let myCart = cart;
+      myCart = myCart.toObject();
+
+      // console.log(myCart);
+      let totalPrice = 0;
+      let priceAddedBooks = myCart?.books?.map((x) => {
+        let id = x?.book?._id;
+        // console.log(x);
+        x.price = priceObj[`${id}`].price;
+        totalPrice += x?.price * x?.quantity;
+        return x;
+      });
+      console.log("priceAddedBooks ", priceAddedBooks);
+
       // update walllet,,,
-      if (user?.wallet?.balance && user?.wallet?.balance >= cart?.total) {
+      // console.log(user?.wallet?.balance, totalPrice);
+      if (user?.wallet?.balance && user?.wallet?.balance >= totalPrice) {
         let { balance = 0 } = user?.wallet;
-        balance = Number((balance - cart?.total).toFixed(2));
+        balance = Number((balance - totalPrice).toFixed(2));
         const obj = {
           transactionType: "debit",
-          amount: cart?.total,
+          amount: totalPrice,
           time: new Date(),
         };
         const walletUpdate = await WalletModel.updateOne(
@@ -166,10 +226,15 @@ class TransactionController {
 
       const stockSave = await BookModel.bulkWrite(bulk);
       const newTransaction = await TransactionModel.create({
-        books: cart.books,
+        books: priceAddedBooks,
         user: userId,
-        total: cart.total,
+        total: totalPrice,
       });
+
+      newTransaction?.toObject();
+      delete newTransaction?.createdAt;
+      delete newTransaction?.updatedAt;
+      delete newTransaction?.__v;
 
       cart.books = [];
       cart.total = 0;

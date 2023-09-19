@@ -273,10 +273,30 @@ const cartValidator = {
   ],
 };
 
+const walletValidator = {
+  addMoney: [
+    body("amount")
+      .exists()
+      .withMessage("Book amont must be provided")
+      .bail()
+      .isFloat({ min: 100, max: 2000 })
+      .withMessage(
+        "Amount must be integer, value should be greater than 100 and less than 2000"
+      ),
+    body("userId")
+      .exists()
+      .withMessage("User ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+  ],
+};
+
 module.exports = {
   userValidator,
   authValidator,
   bookValidator,
   cartValidator,
   reviewValidator,
+  walletValidator,
 };

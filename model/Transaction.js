@@ -16,6 +16,7 @@ const transactionSchema = new mongoose.Schema(
             required: true,
           },
           quantity: Number,
+          price: Number,
           _id: false,
         },
       ],

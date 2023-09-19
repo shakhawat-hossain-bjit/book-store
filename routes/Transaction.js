@@ -9,6 +9,10 @@ routes.get(
   isAuthenticated,
   TransactionController.findOne
 );
-routes.post("/checkout", isAuthenticated, TransactionController.create);
+routes.post(
+  "/checkout",
+  // isAuthenticated,
+  TransactionController.create
+);
 
 module.exports = routes;

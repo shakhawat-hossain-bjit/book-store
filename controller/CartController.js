@@ -13,9 +13,11 @@ class CartController {
       if (!user) {
         return sendResponse(res, HTTP_STATUS.NOT_FOUND, "User does not exist");
       }
-      const cart = await CartModel.findOne({ user: userId }).populate(
-        "books.book"
+      let cart = await CartModel.findOne({ user: userId }).populate(
+        "books.book",
+        "isbn title author year language stock rating reviewCount "
       );
+
       if (!cart) {
         return sendResponse(
           res,
@@ -23,6 +25,58 @@ class CartController {
           "Cart does not exist for user"
         );
       }
+
+      const bookList = cart?.books?.map((x) => {
+        return x.book;
+      });
+      const booksInCart = await BookModel.find({
+        _id: {
+          $in: bookList,
+        },
+      })
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+        .select("price _id title");
+
+      let currentTime = new Date();
+      let priceObj = {};
+      booksInCart.map((book) => {
+        //discounts map
+        let discountSum = book?.discounts?.reduce((total, discount) => {
+          if (
+            discount?.startTime <= currentTime &&
+            currentTime <= discount?.endTime
+          ) {
+            return total + discount?.discountPercentage;
+          }
+          return total;
+        }, 0);
+        // discouunt 100 er besi hole sei product dekhano jabe na
+        if (discountSum <= 100) {
+          book.price = Number(
+            (book.price - book.price * (discountSum / 100)).toFixed(2)
+          );
+          let subObj = { price: book.price };
+          priceObj[`${book._id}`] = subObj;
+        }
+      });
+      // console.log("priceObj ", priceObj);
+      cart = cart.toObject();
+      let totalPrice = 0;
+      let priceAddedBooks = cart?.books?.map((x) => {
+        let id = x?.book?._id;
+        // console.log(x);
+        x.price = priceObj[`${id}`].price;
+        totalPrice += x?.price * x?.quantity;
+        return x;
+      });
+
+      // console.log(priceAddedBooks);
+      cart.books = priceAddedBooks;
+      cart.totalPrice = Number(totalPrice.toFixed(2));
+      delete cart.createdAt;
+      delete cart.updatedAt;
+      delete cart.__v;
+
       return sendResponse(
         res,
         HTTP_STATUS.OK,
@@ -74,9 +128,9 @@ class CartController {
         );
       }
 
-      console.log(book?.discounts);
+      // console.log(book?.discounts);
       let currentTime = new Date();
-      // console.log(currentTime);
+      console.log(currentTime);
       let discountSum = book?.discounts?.reduce((total, discount) => {
         if (
           discount?.startTime <= currentTime &&
@@ -162,7 +216,7 @@ class CartController {
         .select("price _id title");
 
       // console.log(booksInCart);
-      let price = {};
+      let priceObj = {};
       //books map
       booksInCart.map((book) => {
         //discounts map
@@ -181,18 +235,18 @@ class CartController {
             (book.price - book.price * (discountSum / 100)).toFixed(2)
           );
           let subObj = { price: book.price };
-          price[`${book._id}`] = subObj;
+          priceObj[`${book._id}`] = subObj;
           // return obj;
         }
       });
-      // console.log("price ", price);
+      // console.log("priceObj ", priceObj);
       cart = cart.toObject();
       // console.log(cart);
       let totalPrice = 0;
       let priceAddedBooks = cart?.books?.map((x) => {
         let id = x.book;
         // console.log("my ", price[`${id}`].price);
-        x.price = price[`${id}`].price;
+        x.price = priceObj[`${id}`].price;
         totalPrice += x?.price * x?.quantity;
         return x;
       });
@@ -284,15 +338,16 @@ class CartController {
         );
       }
 
-      console.log(cart.books[bookExistIntex]);
+      // console.log(cart.books[bookExistIntex]);
       //  trying to order  book equal to stock
       if (cart.books[bookExistIntex]?.quantity >= amount) {
-        // cart.books.splice(bookExistIntex, 1);
-        console.log(cart.books[bookExistIntex]);
+        // console.log(cart.books[bookExistIntex]);
         cart.books[bookExistIntex].quantity =
           cart.books[bookExistIntex].quantity - amount;
         if (cart.books[bookExistIntex].quantity == 0) {
-          cart.books[bookExistIntex] = {};
+          // console.log("here 1", cart.books[bookExistIntex]);
+          cart.books.splice(bookExistIntex, 1);
+          // console.log("here 2", cart.books[bookExistIntex]);
         }
         await cart.save();
         const bookList = cart?.books?.map((x) => {
@@ -306,7 +361,7 @@ class CartController {
           .populate("discounts", " -books -createdAt -updatedAt  -__v ")
           .select("price _id title");
 
-        let price = {};
+        let priceObj = {};
         let currentTime = new Date();
         //books map
         booksInCart.map((book) => {
@@ -326,23 +381,22 @@ class CartController {
               (book.price - book.price * (discountSum / 100)).toFixed(2)
             );
             let subObj = { price: book.price };
-            price[`${book._id}`] = subObj;
+            priceObj[`${book._id}`] = subObj;
             // return obj;
           }
         });
-        // console.log("price ", price);
+        // console.log("priceObj ", priceObj);
         cart = cart.toObject();
-        // console.log(cart);
         let totalPrice = 0;
         let priceAddedBooks = cart?.books?.map((x) => {
           let id = x.book;
-          // console.log("my ", price[`${id}`].price);
-          x.price = price[`${id}`].price;
+          // console.log("my ", priceObj[`${id}`].price);
+          x.price = priceObj[`${id}`].price;
           totalPrice += x?.price * x?.quantity;
           return x;
         });
 
-        console.log(priceAddedBooks);
+        console.log("priceAddedBooks ", priceAddedBooks);
         cart.books = priceAddedBooks;
         cart.totalPrice = Number(totalPrice.toFixed(2));
         delete cart.createdAt;
@@ -356,13 +410,6 @@ class CartController {
           cart
         );
       }
-      //  trying to order  book less than stock
-      // if (cart.books[bookExistIntex].quantity > amount) {
-      //   cart.books[bookExistIntex].quantity -= amount;
-      //   cart.total = Number((cart.total - book.price * amount).toFixed(2));
-      //   await cart.save();
-      //   return sendResponse(res, HTTP_STATUS.OK, "Book reduced in cart", cart);
-      // }
     } catch (error) {
       console.log(error);
       return sendResponse(

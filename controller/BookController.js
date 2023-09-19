@@ -151,6 +151,7 @@ class BookController {
 
   async create(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(
@@ -161,6 +162,7 @@ class BookController {
         );
       }
       const {
+        isbn,
         author,
         title,
         country,
@@ -176,19 +178,22 @@ class BookController {
         stock,
       } = req.body;
 
-      const existingProduct = await BookModel.findOne({ title: title });
+      const existingProduct = await BookModel.findOne({
+        $or: [{ isbn: isbn }, { title: title }],
+      });
 
       if (existingProduct) {
         return sendResponse(
           res,
           HTTP_STATUS.UNPROCESSABLE_ENTITY,
-          "Book with same title already exists"
+          "Book with same title or isbn already exists"
         );
       }
 
       const newBook = await BookModel.create({
         author,
         title,
+        isbn,
         country,
         imageLink,
         language,
@@ -223,15 +228,16 @@ class BookController {
 
   async update(req, res) {
     try {
-      // const validation = validationResult(req).array();
-      // if (validation.length > 0) {
-      //   return sendResponse(
-      //     res,
-      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
-      //     "Failed to add the product",
-      //     validation
-      //   );
-      // }
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to add the product",
+          validation
+        );
+      }
 
       const { bookId } = req.params;
       const {
@@ -289,22 +295,24 @@ class BookController {
       );
     }
   }
+
   async delete(req, res) {
     try {
-      // const validation = validationResult(req).array();
-      // if (validation.length > 0) {
-      //   return sendResponse(
-      //     res,
-      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
-      //     "Failed to add the product",
-      //     validation
-      //   );
-      // }
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to add the product",
+          validation
+        );
+      }
 
       const { bookId } = req.params;
 
       let bookDeleted = await BookModel.deleteOne({ _id: bookId });
-      console.log(bookDeleted);
+      // console.log(bookDeleted);
 
       if (bookDeleted?.deletedCount) {
         return sendResponse(res, HTTP_STATUS.OK, "Book deleted successfully");

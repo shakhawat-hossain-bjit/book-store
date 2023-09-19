@@ -1,37 +1,13 @@
 
-Tue Sep 19 2023 14:10:20 GMT+0600 (Bangladesh Standard Time)
-Endpoint: /users/update/6506e3ea835642e2d9c04091
+Tue Sep 19 2023 16:18:57 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/delete/6508211515380b9ef60cff2w
 Request
     Query:{}
-    Params:{"user_id":"6506e3ea835642e2d9c04091"}
-    Body:{"userName":"jhoglu","firstName":"nahidsss","userId":"6504764f0e66b67891991890"}
+    Params:{"bookId":"6508211515380b9ef60cff2w"}
+    Body:{"language":"Italian","price":"1345.6","userId":"6504764f0e66b67891991890"}
     
 
-Tue Sep 19 2023 14:34:54 GMT+0600 (Bangladesh Standard Time)
-Endpoint: /users/update/6506e3ea835642e2d9c04091
-Request
-    Query:{}
-    Params:{"id":"6506e3ea835642e2d9c04091"}
-    Body:{"userName":"jhoglu","firstName":"nahidsss","userId":"6504764f0e66b67891991890"}
-    
-
-Tue Sep 19 2023 14:34:54 GMT+0600 (Bangladesh Standard Time)
+Tue Sep 19 2023 16:18:57 GMT+0600 (Bangladesh Standard Time)
 Error
-    Message: Failed to add the user
-    [{"type":"field","msg":"Customer ID must be provided","path":"user_id","location":"params"}]
-
-Tue Sep 19 2023 14:35:08 GMT+0600 (Bangladesh Standard Time)
-Endpoint: /users/update/6506e3ea835642e2d9c04091
-Request
-    Query:{}
-    Params:{"id":"6506e3ea835642e2d9c04091"}
-    Body:{"userName":"jhoglu","firstName":"nahidsss","userId":"6504764f0e66b67891991890"}
-    
-
-Tue Sep 19 2023 15:25:22 GMT+0600 (Bangladesh Standard Time)
-Endpoint: /books/all?page=1&limit=10
-Request
-    Query:{"page":"1","limit":"10"}
-    Params:{}
-    Body:{}
-    
+    Message: Failed to add the product
+    [{"type":"field","value":"6508211515380b9ef60cff2w","msg":"ID is not in valid mongoDB format","path":"bookId","location":"params"}]

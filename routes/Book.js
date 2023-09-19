@@ -18,6 +18,7 @@ routes.patch(
   "/update/:bookId",
   isAuthenticated,
   isAdmin,
+  bookValidator.update,
   BookController.update
 );
 
@@ -25,7 +26,7 @@ routes.delete(
   "/delete/:bookId",
   isAuthenticated,
   isAdmin,
-  //   bookValidator.add,
+  bookValidator.delete,
   BookController.delete
 );
 

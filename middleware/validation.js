@@ -1,52 +1,6 @@
 const { body, query, param } = require("express-validator");
 const { isValidObjectId } = require("mongoose");
 
-const userValidator = {
-  // create: [
-  //     body("name")
-  //         .exists()
-  //         .withMessage("Name was not provided")
-  //         .bail()
-  //         .notEmpty()
-  //         .withMessage("Name cannot be empty")
-  //         .bail()
-  //         .isString()
-  //         .withMessage("Name must be a string")
-  //         .isLength({ max: 30 })
-  //         .withMessage("Name cannot be more than 30 characters"),
-  //     body("email")
-  //         .exists()
-  //         .withMessage("Email was not provided")
-  //         .bail()
-  //         .notEmpty()
-  //         .withMessage("Email cannot be empty")
-  //         .bail()
-  //         .isString()
-  //         .withMessage("Email must be a string")
-  //         .bail()
-  //         .isEmail()
-  //         .withMessage("Email format is incorrect"),
-  //     body("address.area")
-  //         .exists()
-  //         .withMessage("Area was not provided")
-  //         .bail()
-  //         .isString()
-  //         .withMessage("Area must be a string"),
-  //     body("address.city")
-  //         .exists()
-  //         .withMessage("City was not provided")
-  //         .bail()
-  //         .isString()
-  //         .withMessage("City must be a string"),
-  //     body("address.country")
-  //         .exists()
-  //         .withMessage("Country was not provided")
-  //         .bail()
-  //         .isString()
-  //         .withMessage("Country must be a string"),
-  // ],
-};
-
 const authValidator = {
   signup: [
     body("userName")
@@ -127,6 +81,79 @@ const authValidator = {
       .bail()
       .isString()
       .withMessage("Country must be a string"),
+  ],
+  login: [
+    body("email").exists().withMessage("Email must be provided").bail(),
+    body("password").exists().withMessage("Password must be provided").bail(),
+  ],
+};
+
+const userValidator = {
+  update: [
+    body("firstName")
+      .optional()
+      // .exists()
+      // .withMessage("first name name was not provided")
+      // .bail()
+      .notEmpty()
+      .withMessage("first name cannot be empty")
+      .bail()
+      .isString()
+      .withMessage("first name must be a string")
+      .isLength({ max: 25 })
+      .withMessage("first name cannot be more than 25 characters"),
+    body("lastName")
+      .optional()
+      // .exists()
+      // .withMessage("last name was not provided")
+      // .bail()
+      .notEmpty()
+      .withMessage("last name cannot be empty")
+      .bail()
+      .isString()
+      .withMessage("last name must be a string")
+      .isLength({ max: 25 })
+      .withMessage("last name cannot be more than 25 characters"),
+    body("userName")
+      .optional()
+      // .exists()
+      // .withMessage("user name was not provided")
+      // .bail()
+      .notEmpty()
+      .withMessage("Name cannot be empty")
+      .bail()
+      .isString()
+      .withMessage("Name must be a string")
+      .isLength({ max: 12 })
+      .withMessage("Name cannot be more than 12 characters"),
+    body("phone")
+      .optional()
+      // .exists()
+      // .withMessage("Phone number must be provided")
+      // .bail()
+      .isString()
+      .withMessage("Phone number must be a string")
+      .bail()
+      .matches(/(^(\+88|0088)?(01){1}[3456789]{1}(\d){8})$/)
+      .withMessage("Phone number must be in a valid format"),
+    body("address")
+      .optional()
+      .isObject()
+      .withMessage("Address should be object"),
+    param("id")
+      .exists()
+      .withMessage("Customer ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+  ],
+  delete: [
+    param("customerId")
+      .exists()
+      .withMessage("Customer ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
   ],
 };
 

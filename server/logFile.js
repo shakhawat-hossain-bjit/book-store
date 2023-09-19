@@ -55,7 +55,15 @@ function getTime() {
   return formattedDate;
 }
 
-async function insertInLog(req) {
+async function insertInLog(
+  originalUrl,
+  query,
+  params,
+  body,
+  isError,
+  message,
+  errorPassed
+) {
   try {
     let time = getTime();
     // console.log(req.query);
@@ -65,15 +73,24 @@ async function insertInLog(req) {
 
     let fileData = fs.readFileSync(filePath, "utf8");
     // let fileData = await readLogFile(filePath);
-
     // console.log("fileData ", fileData);
-    fileData += `
+
+    if (isError) {
+      fileData += `
 ${time}
-Endpoint: ${req.originalUrl}
+Error
+    Message: ${message}
+    ${JSON.stringify(errorPassed)}`;
+    } else {
+      fileData += `
+${time}
+Endpoint: ${originalUrl}
 Request
-    Query:${JSON.stringify(req.query)}
-    Body:${JSON.stringify(req.body)}
+    Query:${JSON.stringify(query)}
+    Params:${JSON.stringify(params)}
+    Body:${JSON.stringify(body)}
     `;
+    }
 
     fs.writeFileSync(filePath, fileData + "\n");
     // const result = await writeFile(filePath, fileData);

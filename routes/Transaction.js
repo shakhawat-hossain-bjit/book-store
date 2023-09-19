@@ -4,11 +4,13 @@ const TransactionController = require("../controller/TransactionController");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 routes.get("/all", isAuthenticated, isAdmin, TransactionController.getAll);
+
 routes.get(
-  "/details/:transactionId",
+  "/my-transaction",
   isAuthenticated,
-  TransactionController.findOne
+  TransactionController.getMyTansaction
 );
+
 routes.post(
   "/checkout",
   // isAuthenticated,

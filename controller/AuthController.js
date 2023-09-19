@@ -1,25 +1,36 @@
 const { validationResult } = require("express-validator");
 const HTTP_STATUS = require("../constants/statusCodes");
 const bcrypt = require("bcrypt");
-const Auth = require("../model/Auth");
-const User = require("../model/User");
+const AuthModel = require("../model/Auth");
+const UserModel = require("../model/User");
 const jsonwebtoken = require("jsonwebtoken");
 const { sendResponse } = require("../utils/common");
+const { insertInLog } = require("../server/logFile");
 
-class AuthController {
+class AuthModelController {
   async login(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, { email: req?.body?.email });
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to add the user",
+          validation
+        );
+      }
       const { email, password } = req.body;
-      const auth = await Auth.findOne({ email: email })
-        .populate("user", "-createdAt -updatedAt")
-        .select("-createdAt -updatedAt");
+      const auth = await AuthModel.findOne({ email: email })
+        .populate("user", "-createdAt -updatedAt -__v")
+        .select("-createdAt -updatedAt -__v");
       // console.log(auth);
       // console.log(req.body);
       if (!auth) {
         return sendResponse(
           res,
           HTTP_STATUS.UNAUTHORIZED,
-          "User is not registered"
+          "UserModel is not registered"
         );
       }
       const checkPassword = await bcrypt.compare(password, auth.password);
@@ -31,21 +42,22 @@ class AuthController {
           "Invalid credentials"
         );
       }
-      const responseAuth = auth.toObject();
-      delete responseAuth.password;
+      const responseAuthModel = auth.toObject();
+      delete responseAuthModel.password;
 
-      const jwt = jsonwebtoken.sign(responseAuth, process.env.SECRET_KEY, {
+      const jwt = jsonwebtoken.sign(responseAuthModel, process.env.SECRET_KEY, {
         expiresIn: "2 days",
       });
 
-      responseAuth.token = jwt;
+      responseAuthModel.token = jwt;
       return sendResponse(
         res,
         HTTP_STATUS.OK,
         "Successfully logged in",
-        responseAuth
+        responseAuthModel
       );
     } catch (error) {
+      console.log(error);
       return sendResponse(
         res,
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
@@ -56,6 +68,11 @@ class AuthController {
 
   async signup(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, {
+        email: req?.body?.email,
+        userName: req?.body?.userName,
+        phone: req?.body?.phone,
+      });
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(
@@ -67,7 +84,7 @@ class AuthController {
       }
       const { userName, email, password, phone, address, role } = req.body;
       // console.log(req.body);
-      const auth = await Auth.findOne({
+      const auth = await AuthModel.findOne({
         $or: [{ email: email }, { userName: userName }],
       });
       if (auth?.email == email && auth?.userName == userName) {
@@ -94,13 +111,13 @@ class AuthController {
         return hash;
       });
 
-      const user = await User.create({
+      const user = await UserModel.create({
         userName: userName,
         email: email,
         phone: phone,
         address: address,
       });
-      const result = await Auth.create({
+      const result = await AuthModel.create({
         email: email,
         password: hashedPassword,
         userName: userName,
@@ -128,4 +145,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+module.exports = new AuthModelController();

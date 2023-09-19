@@ -6,6 +6,7 @@ const { insertInLog } = require("../server/logFile");
 
 class BookController {
   async getAll(req, res) {
+    insertInLog(req?.originalUrl, req.query, req.params, req.body);
     try {
       const {
         sortParam,
@@ -130,19 +131,14 @@ class BookController {
         return sendResponse(res, HTTP_STATUS.NOT_FOUND, "No Books were found");
       }
 
-      return sendResponse(
-        res,
-        HTTP_STATUS.OK,
-        "Successfully got all products",
-        {
-          totalBook: bookCount,
-          filteredBookCount: filteredBookCount,
-          count: discountedBooks.length,
-          page: parseInt(page),
-          limit: parseInt(limit),
-          books: discountedBooks,
-        }
-      );
+      return sendResponse(res, HTTP_STATUS.OK, "Successfully got all books", {
+        totalBook: bookCount,
+        filteredBookCount: filteredBookCount,
+        count: discountedBooks.length,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        books: discountedBooks,
+      });
     } catch (error) {
       console.log(error);
       return sendResponse(

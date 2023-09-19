@@ -42,7 +42,7 @@ class TransactionController {
           HTTP_STATUS.OK,
           "Successfully received all transactions",
           {
-            totalTransactiom: transactionCount,
+            totalTransaction: transactionCount,
             count: transactions.length,
             page: parseInt(page),
             limit: parseInt(limit),
@@ -65,19 +65,38 @@ class TransactionController {
     }
   }
 
-  async findOne(req, res) {
+  async getMyTansaction(req, res) {
     try {
-      let transaction = await TransactionModel.find({})
+      // const validation = validationResult(req).array();
+      // if (validation.length > 0) {
+      //   return sendResponse(
+      //     res,
+      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      //     "Failed to add the Book",
+      //     validation
+      //   );
+      // }
+
+      const { userId } = req.body;
+      let transaction = await TransactionModel.find({ user: userId })
         .populate("user", "name email")
         .populate("books.book", "title author price rating language category")
         .select("-__v");
 
-      return sendResponse(
-        res,
-        HTTP_STATUS.OK,
-        "Transaction details is returned",
-        transaction
-      );
+      if (transaction.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.OK,
+          "Transaction details is returned",
+          transaction
+        );
+      } else {
+        return sendResponse(
+          res,
+          HTTP_STATUS.NOT_FOUND,
+          "No transactions were found"
+        );
+      }
     } catch (error) {
       console.log(error);
       return sendResponse(
@@ -90,6 +109,16 @@ class TransactionController {
 
   async create(req, res) {
     try {
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to add the Book",
+          validation
+        );
+      }
+
       const { userId, cartId } = req.body;
 
       const user = await UserModel.findOne({ _id: userId }).populate("wallet");

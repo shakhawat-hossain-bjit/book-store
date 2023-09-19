@@ -1,16 +1,13 @@
+const { insertInLog } = require("../server/logFile");
+
 const sendResponse = (res, status, message, result = null) => {
   const response = {};
   if (status >= 400) {
+    insertInLog("", {}, {}, {}, true, message, result);
     response.success = false;
     response.error = result;
     response.message = "Internal server error";
-  }
-  // if (status >= 300) {
-  //   response.warning = false;
-  //   response.error = result;
-  //   response.message = "";
-  // }
-  else {
+  } else {
     response.success = true;
     response.data = result;
     response.message = "Successfully completed operations";

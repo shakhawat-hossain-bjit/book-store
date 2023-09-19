@@ -3,10 +3,12 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const { sendResponse } = require("../utils/common");
 const WalletModel = require("../model/wallet");
 const UserModel = require("../model/User");
+const { insertInLog } = require("../server/logFile");
 
 class WalletController {
   async addBalanceToWallet(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(

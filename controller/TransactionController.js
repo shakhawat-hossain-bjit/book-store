@@ -5,10 +5,13 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const { sendResponse } = require("../utils/common");
 const UserModel = require("../model/User");
 const WalletModel = require("../model/wallet");
+const { insertInLog } = require("../server/logFile");
+const { validationResult } = require("express-validator");
 
 class TransactionController {
   async getAll(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const { page = 1, limit } = req.query;
       const { detail } = req.query;
       let transactions;
@@ -67,6 +70,7 @@ class TransactionController {
 
   async getMyTansaction(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       // const validation = validationResult(req).array();
       // if (validation.length > 0) {
       //   return sendResponse(
@@ -109,6 +113,7 @@ class TransactionController {
 
   async create(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(
@@ -238,7 +243,7 @@ class TransactionController {
       } else {
         return sendResponse(
           res,
-          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          HTTP_STATUS.PAYMENT_REQUIRED,
           "Insuffiecient balance"
         );
       }
@@ -254,13 +259,13 @@ class TransactionController {
       });
 
       const stockSave = await BookModel.bulkWrite(bulk);
-      const newTransaction = await TransactionModel.create({
+      let newTransaction = await TransactionModel.create({
         books: priceAddedBooks,
         user: userId,
         total: totalPrice,
       });
 
-      newTransaction?.toObject();
+      newTransaction = newTransaction?.toObject();
       delete newTransaction?.createdAt;
       delete newTransaction?.updatedAt;
       delete newTransaction?.__v;

@@ -320,9 +320,9 @@ const reviewValidator = {
       .optional()
       // .withMessage("Review content must provide")
       // .bail()
-      .isLength({ min: 10, max: 80 })
+      .isLength({ min: 5, max: 70 })
       .withMessage(
-        "Review content must not less than 10 characters, and more than 70 characters"
+        "Review content must not less than 5 characters, and more than 70 characters"
       ),
     body("rating")
       .exists()
@@ -341,6 +341,12 @@ const reviewValidator = {
       .bail()
       .matches(/^[a-f\d]{24}$/i)
       .withMessage("ID is not in valid mongoDB format"),
+    body("content")
+      .optional()
+      .isLength({ min: 5, max: 70 })
+      .withMessage(
+        "Review content must not less than 5 characters, and more than 70 characters"
+      ),
     body("rating")
       .optional()
       .isNumeric()
@@ -349,10 +355,18 @@ const reviewValidator = {
       .isFloat({ min: 0, max: 5 })
       .withMessage("Rating must be in between 0 and 5"),
   ],
+  deleteReview: [
+    param("reviewId")
+      .exists()
+      .withMessage("Review ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+  ],
 };
 
 const cartValidator = {
-  addRemoveItemCart: [
+  addRemoveInCart: [
     body("userId")
       .exists()
       .withMessage("User ID must be provided")
@@ -371,6 +385,14 @@ const cartValidator = {
       .bail()
       .isInt({ min: 1 })
       .withMessage("Amount must be integer, value should be 1 or above"),
+  ],
+  getCartOfUser: [
+    param("userId")
+      .exists()
+      .withMessage("user ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
   ],
 };
 
@@ -393,6 +415,87 @@ const walletValidator = {
   ],
 };
 
+const discountValidator = {
+  addDiscount: [
+    body("title")
+      .exists()
+      .withMessage("Title must be provided")
+      .bail()
+      .isString()
+      .withMessage("Title must be string"),
+    body("startTime")
+      .exists()
+      .withMessage("Start time must be provided")
+      .bail()
+      // .isDate()
+      // .withMessage("Start time must be a date")
+      .isISO8601()
+      .toDate()
+      .withMessage("Invalid day received"),
+    body("endTime")
+      .exists()
+      .withMessage("End time must be provided")
+      .bail()
+      // .isDate()
+      // .withMessage("End time must be a date")
+      .isISO8601()
+      .toDate()
+      .withMessage("Invalid day received"),
+    // .custom((value, { req }) => {
+    //   if (value > req.body.startTime) {
+    //     return true;
+    //   }
+    //   throw new Error("End Date must be greater than start date");
+    // }),
+    body("discountPercentage")
+      .exists()
+      .withMessage("discount must be provided")
+      .bail()
+      .isFloat({ min: 0, max: 100 })
+      .withMessage("discount percentage in between 0 to 100"),
+  ],
+  updateDiscount: [
+    body("title").optional().isString().withMessage("Title must be string"),
+    body("startTime")
+      .optional()
+      .isISO8601()
+      .toDate()
+      .withMessage("Invalid day received"),
+    body("endTime")
+      .optional()
+      .isISO8601()
+      .toDate()
+      .withMessage("Invalid day received")
+      .custom((value, { req }) => {
+        if (value > req.body.startTime) {
+          return true;
+        }
+        throw new Error("End Date must be greater than start date");
+      }),
+    body("discountPercentage")
+      .optional()
+      .isFloat({ min: 0, max: 100 })
+      .withMessage("discount percentage in between 0 to 100"),
+  ],
+};
+
+const transactionValidator = {
+  transactionCheckout: [
+    body("userId")
+      .exists()
+      .withMessage("User ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+    body("cartId")
+      .exists()
+      .withMessage("Book ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
+  ],
+};
+
 module.exports = {
   userValidator,
   authValidator,
@@ -400,4 +503,6 @@ module.exports = {
   cartValidator,
   reviewValidator,
   walletValidator,
+  discountValidator,
+  transactionValidator,
 };

@@ -11,3 +11,390 @@ Tue Sep 19 2023 16:18:57 GMT+0600 (Bangladesh Standard Time)
 Error
     Message: Failed to add the product
     [{"type":"field","value":"6508211515380b9ef60cff2w","msg":"ID is not in valid mongoDB format","path":"bookId","location":"params"}]
+
+Tue Sep 19 2023 17:00:02 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":"2023-09-18T10:00:00Z","msg":"Start time must be a date","path":"startTime","location":"body"},{"type":"field","value":"2023-09-23T11:00:00Z","msg":"End time must be a date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:01:24 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":"2023-09-18T10:00:00Z","msg":"Start time must be a date","path":"startTime","location":"body"},{"type":"field","value":"2023-09-23T11:00:00Z","msg":"End time must be a date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:04:42 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":"2023-09-18T10:00:00Z","msg":"Start time must be a date","path":"startTime","location":"body"}]
+
+Tue Sep 19 2023 17:05:56 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"15","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:07:24 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":null,"discountPercentage":"15","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:07:24 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":"2023-09-35","msg":"Invalid day received","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:07:36 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":null,"discountPercentage":"15","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:07:36 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":"er","msg":"Invalid day received","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:07:42 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":"0122-12-31T17:58:20.000Z","discountPercentage":"15","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:07:42 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the user
+    [{"type":"field","value":123,"msg":"Invalid day received","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:08:42 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65026ad49ab16606d22b71d5"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:08:57 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-18T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65043a4f887cf360da74c5e2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:08:57 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: All books to add discount not exist
+    null
+
+Tue Sep 19 2023 17:19:58 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: There is no such route
+    null
+
+Tue Sep 19 2023 17:20:13 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-18T10:00:00Z","endTime":"2023-09-23","discountPercentage":"15","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:24:17 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65043a4f887cf360da74c5e2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:24:17 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Discount
+    [{"type":"field","value":"2023-09-23T00:00:00.000Z","msg":"End Date must be greater than start date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:24:41 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T15:00:00.000Z","endTime":"2023-09-28T10:00:00.000Z","discountPercentage":"5","books":["65043a4f887cf360da74c5e2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:24:41 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Discount
+    [{"type":"field","value":"2023-09-28T10:00:00.000Z","msg":"End Date must be greater than start date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:25:05 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T15:00:00.000Z","endTime":null,"discountPercentage":"5","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:25:05 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Discount
+    [{"type":"field","value":"2023-09-28T25:00:00Z","msg":"Invalid day received","path":"endTime","location":"body"},{"type":"field","value":null,"msg":"End Date must be greater than start date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:25:12 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T15:00:00.000Z","endTime":"2023-09-29T00:00:00.000Z","discountPercentage":"5","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:25:12 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Discount
+    [{"type":"field","value":"2023-09-28T24:00:00Z","msg":"Invalid day received","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:25:21 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T15:00:00.000Z","endTime":null,"discountPercentage":"5","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:25:21 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Discount
+    [{"type":"field","value":"2023-09-28 T23:00:00Z","msg":"Invalid day received","path":"endTime","location":"body"},{"type":"field","value":null,"msg":"End Date must be greater than start date","path":"endTime","location":"body"}]
+
+Tue Sep 19 2023 17:25:26 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/create
+Request
+    Query:{}
+    Params:{}
+    Body:{"title":"Special Day","startTime":"2023-09-28T15:00:00.000Z","endTime":"2023-09-28T23:00:00.000Z","discountPercentage":"5","books":[],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:25:36 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-18T10:00:00Z","endTime":"2023-09-23","discountPercentage":"15","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:27:46 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-18T10:00:00Z","endTime":"2023-09-23","discountPercentage":"15","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:28:43 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-18T10:00:00Z","endTime":"2023-09-23","discountPercentage":"15","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:28:52 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"15","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:29:16 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:29:55 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:32:34 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:32:34 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Tue Sep 19 2023 17:32:44 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:32:44 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Tue Sep 19 2023 17:33:16 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 17:34:20 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 18:35:46 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/65098094ad90515ff6f03b1c
+Request
+    Query:{}
+    Params:{"discountId":"65098094ad90515ff6f03b1c"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-23","discountPercentage":"5","books":["65026ad49ab16606d22b71d0"],"userId":"6504764f0e66b67891991890"}
+    
+
+Tue Sep 19 2023 18:51:48 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Token invalid
+    null
+
+Tue Sep 19 2023 18:54:20 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: You have already reviewd. Now you may modify your review
+    null
+
+Tue Sep 19 2023 20:09:00 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Token invalid
+    null
+
+Tue Sep 19 2023 20:09:10 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /auth/log-in
+Request
+    Query:{}
+    Params:{"email":"shihab@gmail.com"}
+    Body:undefined
+    
+
+Tue Sep 19 2023 20:30:07 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Tue Sep 19 2023 20:30:24 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d6g"}
+    
+
+Tue Sep 19 2023 20:30:24 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Tue Sep 19 2023 20:30:52 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d6g"}
+    
+
+Tue Sep 19 2023 20:30:52 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to add the Book
+    [{"type":"field","value":"650863220a6f5f0a7a850d6g","msg":"ID is not in valid mongoDB format","path":"cartId","location":"body"}]
+
+Tue Sep 19 2023 20:30:59 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d68"}
+    
+
+Tue Sep 19 2023 20:35:14 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d68"}
+    
+
+Tue Sep 19 2023 20:35:14 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Cart has no book added
+    null
+
+Tue Sep 19 2023 20:35:28 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /cart/add-book
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","bookId":"65026ad49ab16606d22b71d0","amount":1}
+    
+
+Tue Sep 19 2023 20:35:32 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /cart/add-book
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","bookId":"65026ad49ab16606d22b71d2","amount":1}
+    
+
+Tue Sep 19 2023 20:35:39 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /cart/add-book
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","bookId":"65026ad49ab16606d22b71d6","amount":1}
+    
+
+Tue Sep 19 2023 20:35:54 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d68"}
+    
+
+Tue Sep 19 2023 20:35:54 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Internal server error
+    null
+
+Tue Sep 19 2023 20:36:16 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /transaction/checkout
+Request
+    Query:{}
+    Params:{}
+    Body:{"userId":"6506d340043de5134ebc225c","cartId":"650863220a6f5f0a7a850d68"}
+    

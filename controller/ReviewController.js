@@ -7,6 +7,7 @@ const { sendResponse } = require("../utils/common");
 class ReviewController {
   async create(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       // express validator
       const validation = validationResult(req).array();
       if (validation.length > 0) {
@@ -24,7 +25,7 @@ class ReviewController {
       if (existReview) {
         return sendResponse(
           res,
-          HTTP_STATUS.OK,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
           "You have already reviewd. Now you may modify your review"
         );
       }
@@ -60,13 +61,25 @@ class ReviewController {
           { _id: bookId },
           { $set: { reviewCount, rating }, $push: { reviews: newReview?._id } }
         );
-        if (bookUpdate)
+
+        if (bookUpdate) {
+          newReview = newReview.toObject();
+          delete newReview?.createdAt;
+          delete newReview?.updatedAt;
+          delete newReview?.__v;
           return sendResponse(
             res,
             HTTP_STATUS.OK,
             "Successfully added review",
             newReview
           );
+        }
+
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Something went wrong"
+        );
       }
     } catch (error) {
       console.log(error);
@@ -80,6 +93,7 @@ class ReviewController {
 
   async update(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       // express validator
       const validation = validationResult(req).array();
       if (validation.length > 0) {
@@ -239,16 +253,17 @@ class ReviewController {
 
   async delete(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       // express validator
-      // const validation = validationResult(req).array();
-      // if (validation.length > 0) {
-      //   return sendResponse(
-      //     res,
-      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
-      //     "Failed to update review",
-      //     validation
-      //   );
-      // }
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Failed to update review",
+          validation
+        );
+      }
 
       let { userId } = req.body;
       let { reviewId } = req.params;
@@ -279,10 +294,8 @@ class ReviewController {
         );
       }
 
-      let reviewUpdate;
-
       // console.log("delete ", reviewId);
-      reviewUpdate = await ReviewModel.deleteOne({ _id: reviewId });
+      let reviewUpdate = await ReviewModel.deleteOne({ _id: reviewId });
 
       let previousRating = existReview.rating || 0;
       let { rating: currrentRatingOfBook, reviewCount } = book;
@@ -309,12 +322,19 @@ class ReviewController {
         }
       );
 
-      if (updatedBook)
+      if (updatedBook && reviewUpdate) {
         return sendResponse(
           res,
           HTTP_STATUS.OK,
           "Successfully deleted the review"
         );
+      }
+
+      return sendResponse(
+        res,
+        HTTP_STATUS.UNAVAILABLE_FOR_LEGAL_REASONS,
+        "Something went wrong"
+      );
     } catch (error) {
       console.log(error);
       return sendResponse(

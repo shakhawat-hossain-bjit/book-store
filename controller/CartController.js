@@ -4,10 +4,12 @@ const CartModel = require("../model/Cart");
 const BookModel = require("../model/Book");
 const UserModel = require("../model/User");
 const { sendResponse } = require("../utils/common");
+const { insertInLog } = require("../server/logFile");
 
 class CartController {
   async getCart(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const { userId } = req.params;
       const user = await UserModel.findById({ _id: userId });
       if (!user) {
@@ -95,6 +97,7 @@ class CartController {
 
   async addBookToCart(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(
@@ -276,6 +279,7 @@ class CartController {
 
   async removeBookFromCart(req, res) {
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const validation = validationResult(req).array();
       if (validation.length > 0) {
         return sendResponse(

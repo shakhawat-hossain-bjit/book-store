@@ -9,7 +9,7 @@ const {
 
 routes.post(
   "/create",
-  //   isAuthenticated,
+  isAuthenticated,
   //   checkUserIdWithBodyId,
   reviewValidator.addReview,
   ReviewController.create
@@ -26,6 +26,7 @@ routes.patch(
 routes.delete(
   "/delete/:reviewId",
   isAuthenticated,
+  reviewValidator.deleteReview,
   //   checkUserIdWithBodyId,
   //   reviewValidator.updateReview,
   ReviewController.delete

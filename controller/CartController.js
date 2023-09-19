@@ -67,9 +67,11 @@ class CartController {
       let priceAddedBooks = cart?.books?.map((x) => {
         let id = x?.book?._id;
         // console.log(x);
-        x.price = priceObj[`${id}`].price;
-        totalPrice += x?.price * x?.quantity;
-        return x;
+        x.price = priceObj[`${id}`]?.price;
+        totalPrice += (x?.price || 0) * x?.quantity;
+        if (x?.price != undefined) {
+          return x;
+        }
       });
 
       // console.log(priceAddedBooks);
@@ -150,6 +152,12 @@ class CartController {
         book.price = Number(
           (book.price - book.price * (discountSum / 100)).toFixed(2)
         );
+      } else {
+        return sendResponse(
+          res,
+          HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          "Sorry book is not available"
+        );
       }
 
       if (book.stock < amount) {
@@ -170,7 +178,7 @@ class CartController {
         newCart = newCart.toObject();
         newCart.books[0].price = book.price;
         // console.log("book.price ", book.price);
-        newCart.total = book.price * amount;
+        // newCart.total = book.price * amount;
         if (newCart) {
           return sendResponse(
             res,
@@ -249,9 +257,11 @@ class CartController {
       let priceAddedBooks = cart?.books?.map((x) => {
         let id = x.book;
         // console.log("my ", price[`${id}`].price);
-        x.price = priceObj[`${id}`].price;
-        totalPrice += x?.price * x?.quantity;
-        return x;
+        x.price = priceObj[`${id}`]?.price;
+        totalPrice += (x?.price || 0) * x?.quantity;
+        if (x?.price != undefined) {
+          return x;
+        }
       });
 
       console.log(priceAddedBooks);
@@ -392,12 +402,14 @@ class CartController {
         // console.log("priceObj ", priceObj);
         cart = cart.toObject();
         let totalPrice = 0;
-        let priceAddedBooks = cart?.books?.map((x) => {
+        let priceAddedBooks = cart?.books?.filter((x) => {
           let id = x.book;
           // console.log("my ", priceObj[`${id}`].price);
-          x.price = priceObj[`${id}`].price;
-          totalPrice += x?.price * x?.quantity;
-          return x;
+          x.price = priceObj[`${id}`]?.price;
+          totalPrice += (x?.price || 0) * x?.quantity;
+          if (x?.price != undefined) {
+            return x;
+          }
         });
 
         console.log("priceAddedBooks ", priceAddedBooks);

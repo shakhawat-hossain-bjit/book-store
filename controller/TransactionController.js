@@ -217,12 +217,14 @@ class TransactionController {
 
       // console.log(myCart);
       let totalPrice = 0;
-      let priceAddedBooks = myCart?.books?.map((x) => {
+      let priceAddedBooks = myCart?.books?.filter((x) => {
         let id = x?.book?._id;
         // console.log(x);
-        x.price = priceObj[`${id}`].price;
-        totalPrice += x?.price * x?.quantity;
-        return x;
+        x.price = priceObj[`${id}`]?.price;
+        totalPrice += (x?.price || 0) * x?.quantity;
+        if (x?.price != undefined) {
+          return x;
+        }
       });
       console.log("priceAddedBooks ", priceAddedBooks);
 

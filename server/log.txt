@@ -1139,3 +1139,80 @@ Request
     Params:{"discountId":"65082ceed61f69f68d14102b"}
     Body:{"title":"Black Friday","startTime":"2023-09-28T10:00:00Z","endTime":"2023-09-30","discountPercentage":17,"books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
     
+
+Wed Sep 20 2023 8:42:56 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/6508211515380b9ef60cff2a
+Request
+    Query:{}
+    Params:{"discountId":"6508211515380b9ef60cff2a"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-28T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 8:42:56 GMT+0600 (Bangladesh Standard Time)
+Error
+    Message: Failed to update the discount
+    [{"type":"field","value":"2023-09-23T00:00:00.000Z","msg":"End Date must be greater than start date","path":"endTime","location":"body"}]
+
+Wed Sep 20 2023 8:43:14 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/6508211515380b9ef60cff2a
+Request
+    Query:{}
+    Params:{"discountId":"6508211515380b9ef60cff2a"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-13T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65026ad49ab16606d22b71d0","65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 8:43:49 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /discount/update/6508211515380b9ef60cff2a
+Request
+    Query:{}
+    Params:{"discountId":"6508211515380b9ef60cff2a"}
+    Body:{"title":"Special Day,..................","startTime":"2023-09-13T10:00:00.000Z","endTime":"2023-09-23T00:00:00.000Z","discountPercentage":"5","books":["65026ad49ab16606d22b71d1","65026ad49ab16606d22b71d2"],"userId":"6504764f0e66b67891991890"}
+    
+
+Wed Sep 20 2023 8:48:36 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&search=shakespeare
+Request
+    Query:{"page":"1","limit":"10","search":"shakespeare"}
+    Params:{}
+    Body:{}
+    
+
+Wed Sep 20 2023 8:49:12 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&search=shakespeare&sortOrder=asc&sortParam=price
+Request
+    Query:{"page":"1","limit":"10","search":"shakespeare","sortOrder":"asc","sortParam":"price"}
+    Params:{}
+    Body:{}
+    
+
+Wed Sep 20 2023 8:49:22 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&search=shakespeare&sortOrder=asc&sortParam=price
+Request
+    Query:{"page":"1","limit":"10","search":"shakespeare","sortOrder":"asc","sortParam":"price"}
+    Params:{}
+    Body:{}
+    
+
+Wed Sep 20 2023 8:49:31 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&search=shakespeare&sortOrder=asc&sortParam=price
+Request
+    Query:{"page":"1","limit":"10","search":"shakespeare","sortOrder":"asc","sortParam":"price"}
+    Params:{}
+    Body:{}
+    
+
+Wed Sep 20 2023 8:50:24 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&search=shakespeare&sortOrder=asc&sortParam=price
+Request
+    Query:{"page":"1","limit":"10","search":"shakespeare","sortOrder":"asc","sortParam":"price"}
+    Params:{}
+    Body:{}
+    
+
+Wed Sep 20 2023 8:50:54 GMT+0600 (Bangladesh Standard Time)
+Endpoint: /books/all?page=1&limit=10&sortOrder=asc&sortParam=price
+Request
+    Query:{"page":"1","limit":"10","sortOrder":"asc","sortParam":"price"}
+    Params:{}
+    Body:{}
+    

@@ -92,9 +92,9 @@ class BookController {
       const bookCount = await BookModel.find().count();
       const filteredBookCount = await BookModel.find(filter).count();
       const books = await BookModel.find(filter)
-        // .sort({
-        //   [sortParam]: sortOrder === "asc" ? 1 : -1,
-        // })
+        .sort({
+          [sortParam]: sortOrder === "asc" ? 1 : -1,
+        })
         .skip((page - 1) * limit)
         .limit(limit ? limit : 100)
         .populate("discounts", " -books -createdAt -updatedAt  -__v ")

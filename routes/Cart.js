@@ -11,21 +11,21 @@ const CartController = require("../controller/CartController");
 
 routes.get(
   "/:userId",
-  //  isAuthenticated,
+  isAuthenticated,
   cartValidator.getCartOfUser,
   CartController.getCart
 );
 
 routes.post(
   "/add-book",
-  // isAuthenticated,
+  isAuthenticated,
   cartValidator.addRemoveInCart,
   CartController.addBookToCart
 );
 
 routes.patch(
   "/remove-book",
-  // isAuthenticated,
+  isAuthenticated,
   cartValidator.addRemoveInCart,
   CartController.removeBookFromCart
 );

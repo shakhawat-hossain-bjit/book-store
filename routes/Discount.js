@@ -16,7 +16,7 @@ routes.patch(
   "/update/:discountId",
   isAuthenticated,
   isAdmin,
-  // discountValidator.addDiscount,
+  discountValidator.updateDiscount,
   DiscountController.updateDiscount
 );
 

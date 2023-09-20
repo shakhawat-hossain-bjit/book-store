@@ -473,9 +473,17 @@ const discountValidator = {
         throw new Error("End Date must be greater than start date");
       }),
     body("discountPercentage")
-      .optional()
+      .exists()
+      .withMessage("discount must be provided")
+      .bail()
       .isFloat({ min: 0, max: 100 })
       .withMessage("discount percentage in between 0 to 100"),
+    param("discountId")
+      .exists()
+      .withMessage("ID must be provided")
+      .bail()
+      .matches(/^[a-f\d]{24}$/i)
+      .withMessage("ID is not in valid mongoDB format"),
   ],
 };
 

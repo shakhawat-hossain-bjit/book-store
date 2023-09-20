@@ -28,7 +28,6 @@ routes.delete(
   isAuthenticated,
   reviewValidator.deleteReview,
   //   checkUserIdWithBodyId,
-  //   reviewValidator.updateReview,
   ReviewController.delete
 );
 

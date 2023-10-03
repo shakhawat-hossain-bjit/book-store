@@ -440,13 +440,13 @@ const discountValidator = {
       // .withMessage("End time must be a date")
       .isISO8601()
       .toDate()
-      .withMessage("Invalid day received"),
-    // .custom((value, { req }) => {
-    //   if (value > req.body.startTime) {
-    //     return true;
-    //   }
-    //   throw new Error("End Date must be greater than start date");
-    // }),
+      .withMessage("Invalid day received")
+      .custom((value, { req }) => {
+        if (value > req.body.startTime) {
+          return true;
+        }
+        throw new Error("End Date must be greater than start date");
+      }),
     body("discountPercentage")
       .exists()
       .withMessage("discount must be provided")

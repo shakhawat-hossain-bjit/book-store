@@ -6,8 +6,8 @@ const { insertInLog } = require("../server/logFile");
 
 class BookController {
   async getAll(req, res) {
-    insertInLog(req?.originalUrl, req.query, req.params, req.body);
     try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
       const {
         sortParam,
         sortOrder,
@@ -139,6 +139,35 @@ class BookController {
         limit: parseInt(limit),
         books: discountedBooks,
       });
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async findOneBook(req, res) {
+    try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
+      const { bookId } = req.params;
+      const book = await BookModel.findOne({ _id: bookId })
+        .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+        .populate("reviews", " -books -createdAt -updatedAt  -__v ")
+        .select("-createdAt -updatedAt -__v");
+
+      if (!book?._id) {
+        return sendResponse(res, HTTP_STATUS.NOT_FOUND, "Book not found");
+      }
+
+      return sendResponse(
+        res,
+        HTTP_STATUS.OK,
+        "Successfully got the book",
+        book
+      );
     } catch (error) {
       console.log(error);
       return sendResponse(
